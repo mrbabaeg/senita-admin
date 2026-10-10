@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0e1a">
+<title>Senita TV — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#0b0e1a; --panel:#141a2e; --panel2:#1b2340; --line:rgba(255,255,255,.08);
+  --text:#eef1fa; --muted:#8e97b8; --accent:#4f6bff; --accent2:#3a55e6;
+  --ok:#2ecc8f; --wait:#ffc44d; --warn:#ff9f43; --bad:#ff5c5c;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Montserrat,system-ui,sans-serif;font-size:15px;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;letter-spacing:.02em}
+.wrap{max-width:900px;margin:0 auto;padding:14px 16px 100px}
+.center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.auth{width:100%;max-width:380px}
+.brand{font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#9aa6d6}
+h1{font-size:22px;margin:6px 0 18px}
+label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.06em}
+input,textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+textarea{min-height:70px;resize:vertical}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;padding:11px 16px;font-weight:600;cursor:pointer;background:var(--panel2);color:var(--text)}
+.btn.primary{background:var(--accent)} .btn.primary:hover{background:var(--accent2)}
+.btn.green{background:var(--ok);color:#06251a}
+.btn.danger{background:rgba(255,92,92,.15);color:#ff8a8a}
+.btn.okb{background:rgba(46,204,143,.15);color:#5fe0ad}
+.btn.block{width:100%;margin-top:16px}
+.btn:disabled{opacity:.5;cursor:default}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0;margin-top:14px;font-size:13px}
+.err{color:#ff8a8a;font-size:13px;margin-top:10px;min-height:1em}
+.hint{color:var(--muted);font-size:12px;line-height:1.5;margin-top:10px}
+
+header{position:sticky;top:0;z-index:5;background:rgba(11,14,26,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .in{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:10px}
+header .t{flex:1;min-width:0}
+header .t b{display:block;font-size:15px}
+header .t small{color:var(--muted);font-size:12px}
+.icon-btn{width:40px;height:40px;border-radius:10px;border:0;background:var(--panel2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.due-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(255,196,77,.16),rgba(255,159,67,.08));border:1px solid rgba(255,196,77,.3);border-radius:14px;padding:12px 14px;margin-bottom:12px;cursor:pointer;width:100%;text-align:left}
+.due-banner b{font-size:24px;color:var(--wait)}
+.due-banner div{flex:1;font-size:13px;line-height:1.4}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.search{position:relative;margin-bottom:10px}
+.search input{padding-left:40px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--accent);border-color:var(--accent)}
+.chip small{opacity:.7;margin-left:4px}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 10px 10px 14px}
+.row .main{flex:1;min-width:0;cursor:pointer}
+.row .l1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row .no{font-weight:700}
+.row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .l2{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .pay-btn{flex:none;padding:10px 12px;font-size:13px}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:3px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.pill.ok{background:rgba(46,204,143,.15);color:var(--ok)}
+.pill.wait{background:rgba(255,196,77,.15);color:var(--wait)}
+.pill.warn{background:rgba(255,159,67,.15);color:var(--warn)}
+.pill.bad{background:rgba(255,92,92,.15);color:var(--bad)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;line-height:1.5}
+
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--panel);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px 28px;border:1px solid var(--line)}
+@media (min-width:700px){.sheet-bg{align-items:center}.sheet{border-radius:18px}}
+.sheet h2{margin:4px 0 0;font-size:20px}
+.sheet .top{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+.sheet .top .grow{flex:1;min-width:0}
+.kv{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
+.kv div{background:var(--panel2);border-radius:10px;padding:10px;font-size:14px;min-width:0;overflow-wrap:anywhere}
+.kv small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.sec{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+.sec h3{margin:0 0 10px;font-size:13px;color:#c3cae6;text-transform:uppercase;letter-spacing:.06em}
+.months{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.months .btn{padding:10px 4px;font-size:13px}
+.months .btn.sel{background:var(--accent)}
+.preview{margin:12px 0 0;padding:12px;border-radius:10px;background:rgba(46,204,143,.08);border:1px solid rgba(46,204,143,.25);font-size:14px}
+.preview b{color:var(--ok)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rowbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rowbtns .btn{flex:1}
+.payh{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;padding:9px 0;border-bottom:1px solid var(--line)}
+.payh:last-child{border-bottom:0}
+.payh .m{color:var(--muted)}
+.payh .undo{background:none;border:1px solid var(--line);border-radius:8px;color:#ffb0b0;padding:4px 8px;font-size:12px;cursor:pointer;margin-left:8px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222b4d;border:1px solid var(--line);padding:12px 14px;border-radius:12px;z-index:50;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 10px 30px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px}
+.toast.bad{background:#4a1f26}
+.toast button{background:none;border:0;color:#9db0ff;font-weight:700;cursor:pointer;padding:4px;white-space:nowrap}
+@media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}.months{grid-template-columns:repeat(5,1fr)}.months .btn{font-size:12px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+'use strict';
+
+/* ================= köməkçilər ================= */
+var LS = {
+  get: function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set: function(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
+var app = document.getElementById('app');
+var sb = null, devices = [], filter = 'all', query = '', current = null;
+
+var ST = { active:['Aktiv','ok'], pending:['Yeni','wait'], expired:['Bitib','warn'], blocked:['Bloklu','bad'] };
+var AYLAR = ['yanvar','fevral','mart','aprel','may','iyun','iyul','avqust','sentyabr','oktyabr','noyabr','dekabr'];
+var ICON = {
+  refresh:'<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>',
+  out:'<svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
+  close:'<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>'
+};
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function pad(n){ return (n<10?'0':'')+n; }
+function errText(e){ return (e && (e.message || e.error_description || e.hint)) || 'Xəta baş verdi'; }
+
+/* ---- Bakı vaxtı (UTC+4, yay vaxtı yoxdur) ---- */
+var OFF = 4*3600*1000;
+function bk(ms){ var d=new Date(ms+OFF); return { y:d.getUTCFullYear(), m:d.getUTCMonth(), d:d.getUTCDate(), h:d.getUTCHours(), mi:d.getUTCMinutes() }; }
+function bkMidnight(y,m,d){ return Date.UTC(y,m,d) - OFF; }
+function daysIn(y,m){ return new Date(Date.UTC(y,m+1,0)).getUTCDate(); }
+// Cari dövr sərhədi: bu ayın 1-i gün sonu (= 2-si 00:00)
+function boundary(now){ var p=bk(now); return bkMidnight(p.y,p.m,2); }
+function addMonths(ms, n){
+  var p=bk(ms), base=bkMidnight(p.y,p.m,p.d), rest=ms-base;
+  var y=p.y + Math.floor((p.m+n)/12), m=(p.m+n)%12;
+  return bkMidnight(y,m,Math.min(p.d,daysIn(y,m))) + rest;
+}
+// Serverdəki add_payment ilə eyni qayda
+function nextExpiry(expIso, months){
+  var b = boundary(Date.now());
+  var base = Math.max(expIso ? Date.parse(expIso) : b, b);
+  return addMonths(base, months);
+}
+// Ödəniş gözlənilən növbəti sərhəd (ayın 1-i gün sonu)
+function upcomingBoundary(){
+  var now=Date.now(), b=boundary(now);
+  return now < b ? b : addMonths(b,1);
+}
+// "Son gün": bitmə anından 1 ms əvvəl
+function lastDay(ms){ var p=bk(ms-1); return p.d+' '+AYLAR[p.m]+' '+p.y; }
+function lastDayShort(ms){ var p=bk(ms-1); return p.d+' '+AYLAR[p.m].slice(0,3); }
+function fmtDT(iso){ if(!iso) return '—'; var p=bk(Date.parse(iso)); return pad(p.d)+'.'+pad(p.m+1)+'.'+p.y+' '+pad(p.h)+':'+pad(p.mi); }
+function ago(iso){
+  if(!iso) return 'heç vaxt';
+  var m=Math.round((Date.now()-Date.parse(iso))/60000);
+  if(m<1) return 'indicə'; if(m<60) return m+' dəq əvvəl';
+  var h=Math.round(m/60); if(h<24) return h+' saat əvvəl';
+  return Math.round(h/24)+' gün əvvəl';
+}
+
+function statusOf(d){ if(d.blocked) return 'blocked'; if(!d.expires_at) return 'pending'; return Date.parse(d.expires_at) <= Date.now() ? 'expired' : 'active'; }
+function isDue(d){ return !!d.expires_at && Date.parse(d.expires_at) <= upcomingBoundary(); }
+function label(d){ return '#'+(d.customer_no||'—') + (d.customer_name ? ' · '+d.customer_name : ''); }
+
+function toast(msg, opts){
+  opts = opts || {};
+  var old=document.querySelector('.toast'); if(old) old.remove();
+  var t=document.createElement('div'); t.className='toast'+(opts.bad?' bad':'');
+  var s=document.createElement('span'); s.textContent=msg; t.appendChild(s);
+  if(opts.action){ var b=document.createElement('button'); b.textContent=opts.action[0]; b.onclick=function(){ t.remove(); opts.action[1](); }; t.appendChild(b); }
+  document.body.appendChild(t); setTimeout(function(){ t.remove(); }, opts.action ? 7000 : 2800);
+}
+
+/* ================= start ================= */
+async function boot(){
+  var url=LS.get('mrb_sb_url'), key=LS.get('mrb_sb_key');
+  if(!url || !key) return renderSetup();
+  try { sb = supabase.createClient(url, key, { auth:{ persistSession:true, autoRefreshToken:true } }); }
+  catch(e){ return renderSetup('Server ünvanı və ya açar səhvdir.'); }
+  var s = await sb.auth.getSession();
+  if(!s.data.session) return renderLogin();
+  var r = await sb.rpc('is_admin');
+  if(r.error || r.data !== true){ await sb.auth.signOut(); return renderLogin(r.error ? errText(r.error) : 'Bu hesab admin siyahısında deyil.'); }
+  renderMain(); load();
+}
+
+function renderSetup(err){
+  app.innerHTML =
+    '<div class="center"><form class="card auth" id="f">'+
+      '<div class="brand">Senita TV</div><h1>Server ayarları</h1>'+
+      '<label>Supabase Project URL</label><input id="u" placeholder="https://xxxx.supabase.co" value="'+esc(LS.get('mrb_sb_url')||'')+'" required>'+
+      '<label>Publishable key</label><input id="k" placeholder="sb_publishable_..." value="'+esc(LS.get('mrb_sb_key')||'')+'" required>'+
+      '<button class="btn primary block">Yadda saxla</button>'+
+      '<div class="err">'+esc(err||'')+'</div>'+
+      '<div class="hint">Supabase → Connect düyməsi (və ya Settings → API Keys). Yalnız bu brauzerdə saxlanılır.</div>'+
+    '</form></div>';
+  document.getElementById('f').onsubmit=function(e){
+    e.preventDefault();
+    LS.set('mrb_sb_url', document.getElementById('u').value.trim().replace(/\/+$/,''));
+    LS.set('mrb_sb_key', document.getElementById('k').value.trim());
+    boot();
+  };
+}
+
+function renderLogin(err){
+  app.innerHTML =
+    '<div class="center"><form class="card auth" id="f">'+
+      '<div class="brand">Senita TV</div><h1>Admin girişi</h1>'+
+      '<label>Email</label><input id="e" type="email" autocomplete="username" required>'+
+      '<label>Şifrə</label><input id="p" type="password" autocomplete="current-password" required>'+
+      '<button class="btn primary block" id="b">Daxil ol</button>'+
+      '<div class="err" id="er">'+esc(err||'')+'</div>'+
+      '<button type="button" class="link" id="cfg">Server ayarlarını dəyiş</button>'+
+    '</form></div>';
+  document.getElementById('cfg').onclick=function(){ renderSetup(); };
+  document.getElementById('f').onsubmit=async function(e){
+    e.preventDefault();
+    var b=document.getElementById('b'); b.disabled=true; b.textContent='Yoxlanılır…';
+    var r=await sb.auth.signInWithPassword({ email:document.getElementById('e').value.trim(), password:document.getElementById('p').value });
+    if(r.error){ b.disabled=false; b.textContent='Daxil ol'; document.getElementById('er').textContent = r.error.message==='Invalid login credentials' ? 'Email və ya şifrə səhvdir.' : errText(r.error); return; }
+    boot();
+  };
+}
+
+/* ================= əsas ekran ================= */
+function renderMain(){
+  app.innerHTML =
+    '<header><div class="in"><div class="t"><b>Senita TV</b><small id="cyc"></small></div>'+
+      '<button class="icon-btn" id="rf" title="Yenilə">'+ICON.refresh+'</button>'+
+      '<button class="icon-btn" id="lo" title="Çıxış">'+ICON.out+'</button></div></header>'+
+    '<div class="wrap">'+
+      '<div id="banner"></div>'+
+      '<div class="stats" id="stats"></div>'+
+      '<div class="search">'+ICON.search+'<input id="q" placeholder="ID, ad, telefon və ya MAC" autocomplete="off"></div>'+
+      '<div class="chips" id="chips"></div>'+
+      '<div class="list" id="list"><div class="empty">Yüklənir…</div></div>'+
+    '</div>';
+  document.getElementById('rf').onclick=load;
+  document.getElementById('lo').onclick=async function(){ await sb.auth.signOut(); boot(); };
+  var q=document.getElementById('q'); q.value=query;
+  q.oninput=function(){ query=q.value; renderList(); };
+}
+
+async function load(){
+  var r = await sb.from('devices').select('*').order('customer_no', { ascending:true }).limit(5000);
+  if(r.error){ toast(errText(r.error), {bad:true}); return; }
+  devices = r.data || [];
+  renderList();
+  if(current && document.querySelector('.sheet-bg[data-kind="device"]')) openDevice(current);
+}
+
+function counts(){
+  var c={ all:devices.length, active:0, pending:0, expired:0, blocked:0, due:0 };
+  devices.forEach(function(d){ c[statusOf(d)]++; if(isDue(d)) c.due++; });
+  return c;
+}
+function matches(d){
+  if(filter==='due'){ if(!isDue(d)) return false; }
+  else if(filter!=='all' && statusOf(d)!==filter) return false;
+  if(!query) return true;
+  var q=query.toLowerCase().replace(/[\s\-#:()+]/g,'');
+  var hay=[d.customer_no, d.mac, d.customer_name, d.phone, d.note, d.model].join('|').toLowerCase().replace(/[\s\-#:()+]/g,'');
+  return hay.indexOf(q) >= 0;
+}
+
+function renderList(){
+  var c=counts(), ub=upcomingBoundary();
+  document.getElementById('cyc').textContent = 'Növbəti ödəniş günü: '+lastDay(ub);
+  document.getElementById('banner').innerHTML = c.due
+    ? '<button class="due-banner" id="dueb"><b>'+c.due+'</b><div><strong>Ödəniş gözlənilir</strong><br>'+lastDay(ub)+' gün sonuna qədər uzadılmayanlar avtomatik bloklanacaq. Siyahını açmaq üçün toxun.</div></button>'
+    : '';
+  var dueb=document.getElementById('dueb'); if(dueb) dueb.onclick=function(){ filter='due'; renderList(); window.scrollTo(0,0); };
+  document.getElementById('stats').innerHTML =
+    stat(c.active,'Aktiv')+stat(c.pending,'Yeni')+stat(c.expired,'Bitib')+stat(c.blocked,'Bloklu');
+  var chips=[['all','Hamısı'],['due','Ödəniş gözlənilir'],['active','Aktiv'],['pending','Yeni'],['expired','Bitib'],['blocked','Bloklu']];
+  document.getElementById('chips').innerHTML = chips.map(function(x){
+    return '<button class="chip'+(filter===x[0]?' on':'')+'" data-f="'+x[0]+'">'+x[1]+'<small>'+c[x[0]]+'</small></button>';
+  }).join('');
+  document.querySelectorAll('.chip').forEach(function(b){ b.onclick=function(){ filter=b.getAttribute('data-f'); renderList(); }; });
+
+  var rows=devices.filter(matches);
+  var list=document.getElementById('list');
+  if(!rows.length){
+    list.innerHTML='<div class="empty">'+(devices.length
+      ? (filter==='due' ? 'Bu dövr üçün ödəniş gözlənilən müştəri qalmayıb. ✓' : 'Uyğun müştəri tapılmadı.')
+      : 'Hələ cihaz yoxdur.<br>Tətbiq TV-də ilk dəfə açılanda burada "Yeni" kimi görünəcək.')+'</div>';
+    return;
+  }
+  list.innerHTML = rows.map(function(d){
+    var s=statusOf(d), st=ST[s];
+    var until = d.expires_at ? (s==='active' ? lastDayShort(Date.parse(d.expires_at))+' qədər' : 'bitdi: '+lastDayShort(Date.parse(d.expires_at))) : 'aktivləşdirilməyib';
+    var showPay = s==='pending' || isDue(d) || s==='expired' || s==='blocked';
+    var btn = showPay ? '<button class="btn '+(s==='pending'?'primary':'green')+' pay-btn" data-pay="'+d.id+'">'+(s==='pending'?'Aktivləşdir':'Ödənib')+'</button>' : '';
+    return '<div class="row">'+
+      '<div class="main" data-open="'+d.id+'">'+
+        '<div class="l1"><span class="no">#'+esc(d.customer_no)+'</span><span class="nm">'+esc(d.customer_name||'Ad yazılmayıb')+'</span><span class="pill '+st[1]+'">'+st[0]+'</span></div>'+
+        '<div class="l2">'+esc(until)+' · <span class="mono">'+esc(d.mac)+'</span>'+(d.phone?' · '+esc(d.phone):'')+'</div>'+
+      '</div>'+btn+'</div>';
+  }).join('');
+  list.querySelectorAll('[data-open]').forEach(function(el){ el.onclick=function(){ openDevice(el.getAttribute('data-open')); }; });
+  list.querySelectorAll('[data-pay]').forEach(function(el){ el.onclick=function(){ openPay(el.getAttribute('data-pay')); }; });
+}
+function stat(n,l){ return '<div class="stat"><b>'+n+'</b><span>'+l+'</span></div>'; }
+
+/* ================= pəncərələr ================= */
+function sheet(kind){
+  closeSheet();
+  var bg=document.createElement('div'); bg.className='sheet-bg'; bg.setAttribute('data-kind',kind);
+  bg.onclick=function(e){ if(e.target===bg) closeSheet(); };
+  document.body.appendChild(bg);
+  document.addEventListener('keydown', escClose);
+  return bg;
+}
+function closeSheet(){
+  var bg=document.querySelector('.sheet-bg'); if(bg) bg.remove();
+  document.removeEventListener('keydown', escClose);
+}
+function escClose(e){ if(e.key==='Escape'){ current=null; closeSheet(); } }
+
+/* ---- Ödəniş pəncərəsi (bir toxunuşla) ---- */
+var MONTHS=[1,2,3,6,12];
+function payBlockHtml(d){
+  return '<div class="months">'+MONTHS.map(function(n,i){ return '<button class="btn'+(i===0?' sel':'')+'" data-m="'+n+'">'+n+' ay</button>'; }).join('')+'</div>'+
+    '<div class="preview" id="pv"></div>'+
+    '<div class="grid2"><div><label>Məbləğ (AZN)</label><input id="amt" type="number" inputmode="decimal" min="0" step="0.01" value="'+esc(LS.get('mrb_last_amount')||'')+'"></div>'+
+    '<div><label>Qeyd</label><input id="pnote" placeholder="nağd, kart…"></div></div>';
+}
+function wirePayBlock(root, d, onDone){
+  var months=1;
+  function upd(){
+    var ms=nextExpiry(d.expires_at, months);
+    root.querySelector('#pv').innerHTML='Yeni bitmə: <b>'+lastDay(ms)+'</b> gün sonuna qədər';
+  }
+  root.querySelectorAll('[data-m]').forEach(function(b){
+    b.onclick=function(){ months=+b.getAttribute('data-m'); root.querySelectorAll('[data-m]').forEach(function(x){ x.classList.toggle('sel',x===b); }); upd(); };
+  });
+  upd();
+  return async function(){
+    var amtRaw=root.querySelector('#amt').value.trim();
+    if(amtRaw!=='') LS.set('mrb_last_amount', amtRaw);
+    var r=await sb.rpc('add_payment', { p_device_id:d.id, p_months:months, p_days:0, p_amount: amtRaw===''?null:Number(amtRaw), p_note: root.querySelector('#pnote').value.trim()||null });
+    if(r.error) throw r.error;
+    var saved=r.data;
+    toast(label(d)+' → '+lastDay(Date.parse(saved.expires_at))+' qədər', { action:['Geri al', function(){ undoLast(d.id); }] });
+    if(onDone) onDone();
+  };
+}
+
+function openPay(id){
+  var d=devices.find(function(x){ return x.id===id; }); if(!d) return;
+  var bg=sheet('pay');
+  var s=statusOf(d);
+  bg.innerHTML='<div class="sheet" role="dialog" aria-modal="true">'+
+    '<div class="top"><div class="grow"><span class="pill '+ST[s][1]+'">'+ST[s][0]+'</span><h2>'+esc(label(d))+'</h2>'+
+      '<div class="hint" style="margin-top:4px">'+(d.expires_at?'İndiki bitmə: '+lastDay(Date.parse(d.expires_at)):'Yeni cihaz — ilk aktivləşdirmə')+'</div></div>'+
+      '<button class="icon-btn" id="x">'+ICON.close+'</button></div>'+
+    payBlockHtml(d)+
+    '<button class="btn green block" id="ok">'+(s==='pending'?'Aktivləşdir':'Ödəniş alındı — uzat')+'</button>'+
+  '</div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  var submit=wirePayBlock(bg, d, closeSheet);
+  bg.querySelector('#ok').onclick=guard(submit);
+}
+
+async function undoLast(deviceId){
+  var r=await sb.from('payments').select('id').eq('device_id',deviceId).order('id',{ascending:false}).limit(1);
+  if(r.error || !r.data || !r.data.length){ toast('Geri alınacaq ödəniş yoxdur', {bad:true}); return; }
+  var u=await sb.rpc('undo_payment', { p_payment_id:r.data[0].id });
+  if(u.error){ toast(errText(u.error), {bad:true}); return; }
+  toast('Ödəniş geri alındı'); load();
+}
+
+/* ---- Müştəri kartı ---- */
+function openDevice(id){
+  var d=devices.find(function(x){ return x.id===id; }); if(!d) return;
+  current=id;
+  var bg=document.querySelector('.sheet-bg[data-kind="device"]') || sheet('device');
+  var s=statusOf(d), st=ST[s];
+  var exp=d.expires_at ? lastDay(Date.parse(d.expires_at)) + (s==='active'?' gün sonuna qədər':'') : 'Aktivləşdirilməyib';
+  var dateVal='';
+  if(d.expires_at){ var p=bk(Date.parse(d.expires_at)-1); dateVal=p.y+'-'+pad(p.m+1)+'-'+pad(p.d); }
+
+  bg.innerHTML='<div class="sheet" role="dialog" aria-modal="true">'+
+    '<div class="top"><div class="grow"><span class="pill '+st[1]+'">'+st[0]+'</span><h2>'+esc(label(d))+'</h2></div>'+
+      '<button class="icon-btn" id="x">'+ICON.close+'</button></div>'+
+    '<div class="kv">'+
+      '<div><small>Bitmə</small>'+esc(exp)+'</div>'+
+      '<div><small>Son əlaqə</small>'+esc(ago(d.last_seen))+'</div>'+
+      '<div><small>MAC</small><span class="mono">'+esc(d.mac)+'</span></div>'+
+      '<div><small>Cihaz · versiya</small>'+esc([d.platform==='tv'?'TV':d.platform==='phone'?'Telefon':'', d.model, d.app_version].filter(Boolean).join(' · ')||'—')+'</div>'+
+    '</div>'+
+
+    '<div class="sec"><h3>'+(s==='pending'?'Aktivləşdir':'Ödəniş alındı — uzat')+'</h3>'+payBlockHtml(d)+
+      '<button class="btn green block" id="pay">'+(s==='pending'?'Aktivləşdir':'Uzat')+'</button></div>'+
+
+    '<div class="sec"><h3>Müştəri</h3>'+
+      '<label>Ad</label><input id="nm" value="'+esc(d.customer_name||'')+'">'+
+      '<label>Telefon</label><input id="ph" type="tel" value="'+esc(d.phone||'')+'">'+
+      '<label>Ünvan / qeyd</label><textarea id="nt">'+esc(d.note||'')+'</textarea>'+
+      '<button class="btn block" id="sv">Yadda saxla</button></div>'+
+
+    '<div class="sec"><h3>Ödəniş tarixçəsi</h3><div id="pays" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
+
+    '<div class="sec"><h3>Əlavə</h3>'+
+      (d.blocked
+        ? '<div class="hint" style="margin-top:0">Əl ilə bloklanıb'+(d.block_reason?': '+esc(d.block_reason):'')+'</div><button class="btn okb block" id="ub">Bloku aç</button>'
+        : '<label>Dərhal blokla (səbəb ekranda görünür)</label><input id="br" placeholder="məs. Ödəniş gecikir"><button class="btn danger block" id="bl">İndi blokla</button>')+
+      '<label>Son günü əl ilə təyin et</label><div class="grid2"><input id="dt" type="date" value="'+dateVal+'"><button class="btn" id="sd">Təyin et</button></div>'+
+      '<div class="rowbtns"><button class="btn" id="tr">+3 gün sınaq</button><button class="btn" id="rk">Açarı sıfırla</button></div>'+
+      '<div class="rowbtns"><button class="btn danger" id="del">Müştərini sil</button></div>'+
+      '<div class="hint">Açarı sıfırla — müştəri ekranda "Cihaz açarı uyğun gəlmir" görürsə.</div>'+
+    '</div>'+
+  '</div>';
+
+  var $=function(sel){ return bg.querySelector(sel); };
+  function val(sel){ var v=$(sel).value.trim(); return v===''?null:v; }
+  $('#x').onclick=function(){ current=null; closeSheet(); };
+  $('#pay').onclick=guard(wirePayBlock(bg, d));
+  $('#sv').onclick=guard(async function(){ await upd(d.id,{ customer_name:val('#nm'), phone:val('#ph'), note:val('#nt') }); toast('Yadda saxlanıldı'); });
+  if(d.blocked) $('#ub').onclick=guard(async function(){ await upd(d.id,{ blocked:false, block_reason:null }); toast('Blok açıldı'); });
+  else $('#bl').onclick=guard(async function(){ if(!confirm(label(d)+' indi bloklansın?')) return 'skip'; await upd(d.id,{ blocked:true, block_reason:val('#br') }); toast('Bloklandı'); });
+  $('#sd').onclick=guard(async function(){
+    var v=$('#dt').value; if(!v){ toast('Tarix seç',{bad:true}); return 'skip'; }
+    var p=v.split('-'); var ms=bkMidnight(+p[0], +p[1]-1, +p[2]+1);
+    await upd(d.id,{ expires_at:new Date(ms).toISOString() }); toast('Son gün: '+lastDay(ms));
+  });
+  $('#tr').onclick=guard(async function(){
+    var r=await sb.rpc('add_payment',{ p_device_id:d.id, p_months:0, p_days:3, p_amount:null, p_note:'sınaq' });
+    if(r.error) throw r.error; toast('+3 gün verildi', { action:['Geri al', function(){ undoLast(d.id); }] });
+  });
+  $('#rk').onclick=guard(async function(){ if(!confirm('Cihaz açarı sıfırlansın?')) return 'skip'; await upd(d.id,{ device_key:null }); toast('Açar sıfırlandı'); });
+  $('#del').onclick=guard(async function(){
+    if(!confirm(label(d)+' və ödəniş tarixçəsi silinsin?')) return 'skip';
+    var r=await sb.from('devices').delete().eq('id',d.id); if(r.error) throw r.error;
+    current=null; closeSheet(); toast('Silindi');
+  });
+  loadPayments(d.id);
+}
+
+function guard(fn){
+  return async function(){
+    var b=this; b.disabled=true;
+    try { var res=await fn(); if(res!=='skip') await load(); }
+    catch(e){ toast(errText(e), {bad:true}); }
+    finally { if(document.body.contains(b)) b.disabled=false; }
+  };
+}
+async function upd(id, patch){ var r=await sb.from('devices').update(patch).eq('id',id); if(r.error) throw r.error; }
+
+async function loadPayments(id){
+  var r=await sb.from('payments').select('*').eq('device_id',id).order('id',{ascending:false}).limit(60);
+  var el=document.getElementById('pays'); if(!el || current!==id) return;
+  if(r.error){ el.textContent=errText(r.error); return; }
+  if(!r.data.length){ el.textContent='Ödəniş yoxdur.'; return; }
+  var total=r.data.reduce(function(s,p){ return s+(Number(p.amount)||0); },0);
+  el.innerHTML=r.data.map(function(p,i){
+    var per=p.months ? p.months+' ay' : p.days+' gün';
+    var to=p.new_expires ? ' → '+lastDayShort(Date.parse(p.new_expires)) : '';
+    return '<div class="payh"><div>'+esc(fmtDT(p.created_at))+' · '+esc(per)+esc(to)+(p.note?' <span class="m">· '+esc(p.note)+'</span>':'')+'</div>'+
+      '<div style="white-space:nowrap">'+(p.amount!=null?esc(Number(p.amount).toFixed(2))+' ₼':'—')+(i===0?'<button class="undo" data-u="'+p.id+'">Geri al</button>':'')+'</div></div>';
+  }).join('')+'<div class="payh"><div class="m">Cəmi</div><div><b>'+total.toFixed(2)+' ₼</b></div></div>';
+  var u=el.querySelector('[data-u]');
+  if(u) u.onclick=guard(async function(){
+    if(!confirm('Son ödəniş geri alınsın? Bitmə tarixi əvvəlki vəziyyətə qayıdacaq.')) return 'skip';
+    var r2=await sb.rpc('undo_payment',{ p_payment_id:+u.getAttribute('data-u') }); if(r2.error) throw r2.error;
+    toast('Ödəniş geri alındı');
+  });
+}
+
+boot();
+})();
+</script>
+</body>
+</html>
