@@ -417,8 +417,10 @@ function openDevice(id){
         : '<label>Dərhal blokla (səbəb ekranda görünür)</label><input id="br" placeholder="məs. Ödəniş gecikir"><button class="btn danger block" id="bl">İndi blokla</button>')+
       '<label>Son günü əl ilə təyin et</label><div class="grid2"><input id="dt" type="date" value="'+dateVal+'"><button class="btn" id="sd">Təyin et</button></div>'+
       '<div class="rowbtns"><button class="btn" id="tr">+3 gün sınaq</button><button class="btn" id="rk">Açarı sıfırla</button></div>'+
+      '<div class="rowbtns"><button class="btn" id="pr">Uşaq kilidi PIN-i sıfırla</button></div>'+
       '<div class="rowbtns"><button class="btn danger" id="del">Müştərini sil</button></div>'+
       '<div class="hint">Açarı sıfırla — müştəri ekranda "Cihaz açarı uyğun gəlmir" görürsə.</div>'+
+      '<div class="hint">PIN-i sıfırla — müştəri uşaq kilidinin PIN-ini unudubsa. 5 dəqiqə ərzində (və ya proqram yenidən açılanda) PIN 0000 olur.'+(d.pin_reset_at?' Son sıfırlama: '+fmtDT(d.pin_reset_at):'')+'</div>'+
     '</div>'+
   '</div>';
 
@@ -438,6 +440,7 @@ function openDevice(id){
     var r=await sb.rpc('add_payment',{ p_device_id:d.id, p_months:0, p_days:3, p_amount:null, p_note:'sınaq' });
     if(r.error) throw r.error; toast('+3 gün verildi', { action:['Geri al', function(){ undoLast(d.id); }] });
   });
+  $('#pr').onclick=guard(async function(){ if(!confirm(label(d)+' — uşaq kilidinin PIN-i 0000 olsun?')) return 'skip'; await upd(d.id,{ pin_reset_at:new Date().toISOString() }); toast('PIN sıfırlanır — 5 dəq ərzində 0000 olacaq'); });
   $('#rk').onclick=guard(async function(){ if(!confirm('Cihaz açarı sıfırlansın?')) return 'skip'; await upd(d.id,{ device_key:null }); toast('Açar sıfırlandı'); });
   $('#del').onclick=guard(async function(){
     if(!confirm(label(d)+' və ödəniş tarixçəsi silinsin?')) return 'skip';
