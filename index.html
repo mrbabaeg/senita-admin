@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0e1a">
-<title>Senita TV — Admin</title>
+<title>VEXO — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -103,6 +103,16 @@ header .t small{color:var(--muted);font-size:12px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222b4d;border:1px solid var(--line);padding:12px 14px;border-radius:12px;z-index:50;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 10px 30px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px}
 .toast.bad{background:#4a1f26}
 .toast button{background:none;border:0;color:#9db0ff;font-weight:700;cursor:pointer;padding:4px;white-space:nowrap}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.rep-tab{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+.rep-tab td{padding:8px 4px;border-bottom:1px solid var(--line)}
+.rep-tab td.r{text-align:right;white-space:nowrap}
+.big-n{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.big-n div{background:var(--panel2);border-radius:12px;padding:12px}
+.big-n b{display:block;font-size:22px}
+.big-n span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.prog{height:8px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:10px}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
 @media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}.months{grid-template-columns:repeat(5,1fr)}.months .btn{font-size:12px}}
 </style>
 </head>
@@ -197,7 +207,7 @@ async function boot(){
 function renderSetup(err){
   app.innerHTML =
     '<div class="center"><form class="card auth" id="f">'+
-      '<div class="brand">Senita TV</div><h1>Server ayarları</h1>'+
+      '<div class="brand">VEXO</div><h1>Server ayarları</h1>'+
       '<label>Supabase Project URL</label><input id="u" placeholder="https://xxxx.supabase.co" value="'+esc(LS.get('mrb_sb_url')||'')+'" required>'+
       '<label>Publishable key</label><input id="k" placeholder="sb_publishable_..." value="'+esc(LS.get('mrb_sb_key')||'')+'" required>'+
       '<button class="btn primary block">Yadda saxla</button>'+
@@ -215,7 +225,7 @@ function renderSetup(err){
 function renderLogin(err){
   app.innerHTML =
     '<div class="center"><form class="card auth" id="f">'+
-      '<div class="brand">Senita TV</div><h1>Admin girişi</h1>'+
+      '<div class="brand">VEXO</div><h1>Admin girişi</h1>'+
       '<label>Email</label><input id="e" type="email" autocomplete="username" required>'+
       '<label>Şifrə</label><input id="p" type="password" autocomplete="current-password" required>'+
       '<button class="btn primary block" id="b">Daxil ol</button>'+
@@ -235,17 +245,20 @@ function renderLogin(err){
 /* ================= əsas ekran ================= */
 function renderMain(){
   app.innerHTML =
-    '<header><div class="in"><div class="t"><b>Senita TV</b><small id="cyc"></small></div>'+
+    '<header><div class="in"><div class="t"><b>VEXO</b><small id="cyc"></small></div>'+
       '<button class="icon-btn" id="rf" title="Yenilə">'+ICON.refresh+'</button>'+
       '<button class="icon-btn" id="lo" title="Çıxış">'+ICON.out+'</button></div></header>'+
     '<div class="wrap">'+
       '<div id="banner"></div>'+
       '<div class="stats" id="stats"></div>'+
+      '<div class="tools"><button class="btn" id="rep">📊 Aylıq hesabat</button><button class="btn" id="upd">⬆ Tətbiq yeniləməsi</button></div>'+
       '<div class="search">'+ICON.search+'<input id="q" placeholder="ID, ad, telefon və ya MAC" autocomplete="off"></div>'+
       '<div class="chips" id="chips"></div>'+
       '<div class="list" id="list"><div class="empty">Yüklənir…</div></div>'+
     '</div>';
   document.getElementById('rf').onclick=load;
+  document.getElementById('rep').onclick=openReport;
+  document.getElementById('upd').onclick=openRelease;
   document.getElementById('lo').onclick=async function(){ await sb.auth.signOut(); boot(); };
   var q=document.getElementById('q'); q.value=query;
   q.oninput=function(){ query=q.value; renderList(); };
@@ -409,6 +422,12 @@ function openDevice(id){
       '<label>Ünvan / qeyd</label><textarea id="nt">'+esc(d.note||'')+'</textarea>'+
       '<button class="btn block" id="sv">Yadda saxla</button></div>'+
 
+    '<div class="sec"><h3>Müştəriyə mesaj (TV-də göstərilir)</h3>'+
+      (d.notice ? '<div class="hint" style="margin-top:0">Son mesaj ('+fmtDT(d.notice_at)+'): '+esc(d.notice)+'</div>' : '')+
+      '<textarea id="msg" placeholder="məs. Sabah saat 18:00-da ödəniş üçün gələcəm"></textarea>'+
+      '<div class="rowbtns"><button class="btn primary" id="msgs">Göndər</button>'+(d.notice?'<button class="btn" id="msgc">Mesajı sil</button>':'')+'</div>'+
+      '<div class="hint">5 dəqiqə ərzində (və ya proqram açılanda) TV-də bir dəfə göstərilir.</div></div>'+
+
     '<div class="sec"><h3>Ödəniş tarixçəsi</h3><div id="pays" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
 
     '<div class="sec"><h3>Əlavə</h3>'+
@@ -440,6 +459,8 @@ function openDevice(id){
     var r=await sb.rpc('add_payment',{ p_device_id:d.id, p_months:0, p_days:3, p_amount:null, p_note:'sınaq' });
     if(r.error) throw r.error; toast('+3 gün verildi', { action:['Geri al', function(){ undoLast(d.id); }] });
   });
+  $('#msgs').onclick=guard(async function(){ var m=$('#msg').value.trim(); if(!m){ toast('Mesaj yazın',{bad:true}); return 'skip'; } await upd(d.id,{ notice:m.slice(0,500), notice_at:new Date().toISOString() }); toast('Mesaj göndərildi'); });
+  if(d.notice) $('#msgc').onclick=guard(async function(){ await upd(d.id,{ notice:null, notice_at:null }); toast('Mesaj silindi'); });
   $('#pr').onclick=guard(async function(){ if(!confirm(label(d)+' — uşaq kilidinin PIN-i 0000 olsun?')) return 'skip'; await upd(d.id,{ pin_reset_at:new Date().toISOString() }); toast('PIN sıfırlanır — 5 dəq ərzində 0000 olacaq'); });
   $('#rk').onclick=guard(async function(){ if(!confirm('Cihaz açarı sıfırlansın?')) return 'skip'; await upd(d.id,{ device_key:null }); toast('Açar sıfırlandı'); });
   $('#del').onclick=guard(async function(){
@@ -448,6 +469,99 @@ function openDevice(id){
     current=null; closeSheet(); toast('Silindi');
   });
   loadPayments(d.id);
+}
+
+/* ---- Aylıq hesabat ---- */
+var repMonth=0; /* 0 = bu ay, -1 = keçən ay … */
+async function openReport(){
+  var bg=sheet('report');
+  bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Aylıq hesabat</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div><div id="rp" class="hint">Yüklənir…</div></div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  var p=bk(Date.now()), m=p.m+repMonth, y=p.y+Math.floor(m/12); m=((m%12)+12)%12;
+  var from=bkMidnight(y,m,1), to=bkMidnight(m===11?y+1:y,(m+1)%12,1);
+  var r=await sb.from('payments').select('id,device_id,months,days,amount,note,created_at').gte('created_at',new Date(from).toISOString()).lt('created_at',new Date(to).toISOString()).order('created_at',{ascending:false}).limit(5000);
+  var box=bg.querySelector('#rp'); if(!box) return;
+  if(r.error){ box.textContent=errText(r.error); return; }
+  var pays=(r.data||[]).filter(function(x){ return x.months>0; });
+  var trials=(r.data||[]).filter(function(x){ return x.days>0; }).length;
+  var sum=pays.reduce(function(a,x){ return a+(Number(x.amount)||0); },0);
+  var paidIds={}; pays.forEach(function(x){ paidIds[x.device_id]=true; });
+  var byId={}; devices.forEach(function(d){ byId[d.id]=d; });
+  var c=counts();
+  var notPaid=repMonth===0 ? devices.filter(function(d){ return isDue(d) && !d.blocked; }) : [];
+  var title=AYLAR[m].charAt(0).toUpperCase()+AYLAR[m].slice(1)+' '+y;
+  var h='<div class="chips" style="margin-top:6px"><button class="chip'+(repMonth===-1?' on':'')+'" data-rm="-1">Keçən ay</button><button class="chip'+(repMonth===0?' on':'')+'" data-rm="0">Bu ay</button></div>'+
+    '<h3 style="margin:8px 0 0">'+esc(title)+'</h3>'+
+    '<div class="big-n"><div><b>'+pays.length+'</b><span>Ödəniş</span></div><div><b>'+sum.toFixed(2)+'</b><span>AZN</span></div><div><b>'+Object.keys(paidIds).length+'</b><span>Müştəri ödəyib</span></div></div>'+
+    '<div class="hint" style="margin-top:0">İndi: '+c.active+' aktiv · '+c.expired+' bitib · '+c.blocked+' bloklu · '+c.pending+' yeni'+(trials?' · bu ay '+trials+' sınaq':'')+'</div>';
+  if(repMonth===0){
+    h+='<div class="sec"><h3>Ödəniş gözlənilir ('+notPaid.length+')</h3>'+(notPaid.length? '<table class="rep-tab">'+notPaid.map(function(d){ return '<tr><td>'+esc(label(d))+'</td><td>'+esc(d.phone||'')+'</td><td class="r">'+(d.expires_at?lastDayShort(Date.parse(d.expires_at)):'—')+'</td></tr>'; }).join('')+'</table>' : '<div class="hint" style="margin-top:0">Hamı ödəyib ✓</div>')+'</div>';
+  }
+  h+='<div class="sec"><h3>Ödənişlər</h3>'+(pays.length? '<table class="rep-tab">'+pays.map(function(x){ var d=byId[x.device_id]; return '<tr><td>'+esc(d?label(d):'—')+'</td><td>'+x.months+' ay'+(x.note?' · '+esc(x.note):'')+'</td><td class="r">'+(x.amount!=null?Number(x.amount).toFixed(2)+' ₼':'—')+'<br><span class="m" style="color:var(--muted)">'+fmtDT(x.created_at).slice(0,5)+'</span></td></tr>'; }).join('')+'</table>' : '<div class="hint" style="margin-top:0">Bu ay ödəniş yoxdur.</div>')+'</div>';
+  box.className=''; box.innerHTML=h;
+  box.querySelectorAll('[data-rm]').forEach(function(b){ b.onclick=function(){ repMonth=+b.getAttribute('data-rm'); openReport(); }; });
+}
+
+/* ---- Tətbiq yeniləməsi (APK) ---- */
+function verCode(v){ var m=String(v||'').trim().match(/^(\d+)\.(\d+)\.(\d+)$/); return m ? (+m[1])*10000+(+m[2])*100+(+m[3]) : 0; }
+async function openRelease(){
+  var bg=sheet('release');
+  bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Tətbiq yeniləməsi</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div><div id="rl" class="hint">Yüklənir…</div></div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  var r=await sb.from('app_release').select('*').eq('id',1).maybeSingle();
+  var box=bg.querySelector('#rl'); if(!box) return;
+  if(r.error){ box.innerHTML=esc(errText(r.error))+'<br>Supabase-də yeni schema.sql işlədilib?'; return; }
+  var cur=r.data;
+  var onLatest=cur? devices.filter(function(d){ return d.app_version===cur.version_name; }).length : 0;
+  box.className='';
+  box.innerHTML=
+    (cur ? '<div class="kv"><div><small>Hazırkı versiya</small>'+esc(cur.version_name)+'</div><div><small>Yüklənib</small>'+fmtDT(cur.updated_at)+'</div>'+
+      '<div><small>Bu versiyada olan TV</small>'+onLatest+' / '+devices.length+'</div><div><small>Qeyd</small>'+esc(cur.notes||'—')+'</div></div>' :
+      '<div class="hint" style="margin-top:0">Hələ yeniləmə yüklənməyib.</div>')+
+    '<div class="sec"><h3>Yeni APK yüklə</h3>'+
+      '<label>APK faylı (GitHub Actions-dan VEXO.apk)</label><input id="apk" type="file" accept=".apk,application/vnd.android.package-archive">'+
+      '<label>Versiya (APK seçəndə özü yazılır)</label><input id="vn" placeholder="2.5.0" inputmode="decimal">'+
+      '<label>Müştəriyə qısa qeyd (istəyə bağlı)</label><textarea id="vt" placeholder="məs. Səs və altyazı seçimi əlavə olundu"></textarea>'+
+      '<div class="prog" id="pg" style="display:none"><i id="pgb"></i></div>'+
+      '<button class="btn primary block" id="go">Yüklə və TV-lərə göndər</button>'+
+      '<div class="hint">TV-lər 5 dəqiqə ərzində "Yeni versiya var — Yenilə" görəcək. Versiya nömrəsi APK-dakı ilə eyni olmalıdır, əks halda TV faylı qəbul etməz.</div>'+
+      (cur?'<button class="btn danger block" id="stop">Yeniləmə təklifini dayandır</button>':'')+
+    '</div>';
+  var vn=box.querySelector('#vn'), apk=box.querySelector('#apk');
+  /* the version is read from the APK itself (assets/public/appinfo.json) */
+  apk.onchange=async function(){
+    var f=apk.files[0]; if(!f) return;
+    var m=(f.name||'').match(/(\d+\.\d+\.\d+)/); if(m) vn.value=m[1];
+    try {
+      if(!window.JSZip) await new Promise(function(ok,no){ var sc=document.createElement('script'); sc.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; sc.onload=ok; sc.onerror=no; document.head.appendChild(sc); });
+      var zip=await JSZip.loadAsync(f);
+      var e=zip.file('assets/public/appinfo.json');
+      if(!e){ toast('Bu fayl VEXO APK-sı deyil',{bad:true}); return; }
+      var info=JSON.parse(await e.async('string'));
+      if(info && info.version){ vn.value=info.version; vn.readOnly=true; toast('APK versiyası: '+info.version); }
+    } catch(err){ /* not readable: type the version by hand */ }
+  };
+  box.querySelector('#go').onclick=guard(async function(){
+    var f=apk.files && apk.files[0];
+    if(!f){ toast('APK faylını seçin',{bad:true}); return 'skip'; }
+    var v=vn.value.trim(), code=verCode(v);
+    if(!code){ toast('Versiyanı 2.5.0 formatında yazın',{bad:true}); return 'skip'; }
+    if(cur && code<=cur.version_code && !confirm('Bu versiya ('+v+') hazırkıdan ('+cur.version_name+') yeni deyil. Yenə də davam edilsin?')) return 'skip';
+    if(f.size>95*1024*1024){ toast('Fayl çox böyükdür',{bad:true}); return 'skip'; }
+    var pg=box.querySelector('#pg'), pgb=box.querySelector('#pgb'); pg.style.display='block'; pgb.style.width='30%';
+    var path='vexo-'+v+'.apk';
+    var up=await sb.storage.from('apk').upload(path, f, { upsert:true, contentType:'application/vnd.android.package-archive', cacheControl:'300' });
+    if(up.error) throw up.error;
+    pgb.style.width='80%';
+    var url=sb.storage.from('apk').getPublicUrl(path).data.publicUrl;
+    var w=await sb.from('app_release').upsert({ id:1, version_name:v, version_code:code, apk_url:url, notes:box.querySelector('#vt').value.trim()||null, updated_at:new Date().toISOString() });
+    if(w.error) throw w.error;
+    pgb.style.width='100%';
+    toast('Versiya '+v+' göndərildi');
+    openRelease();
+  });
+  var stop=box.querySelector('#stop');
+  if(stop) stop.onclick=guard(async function(){ if(!confirm('TV-lərə yeniləmə təklifi dayandırılsın?')) return 'skip'; var d=await sb.from('app_release').delete().eq('id',1); if(d.error) throw d.error; toast('Dayandırıldı'); openRelease(); });
 }
 
 function guard(fn){
