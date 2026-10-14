@@ -104,6 +104,20 @@ header .t small{color:var(--muted);font-size:12px}
 .toast.bad{background:#4a1f26}
 .toast button{background:none;border:0;color:#9db0ff;font-weight:700;cursor:pointer;padding:4px;white-space:nowrap}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tools .btn:last-child:nth-child(odd){grid-column:1/-1}
+.logrow{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.45}
+.logrow:last-child{border-bottom:0}
+.logrow .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.logrow .h b{font-size:14px}
+.logrow .w{color:var(--muted);font-size:12px;white-space:nowrap}
+.logrow .d{color:#c3cae6;margin-top:3px;overflow-wrap:anywhere}
+.logrow .m{color:var(--muted);font-size:12px;margin-top:2px}
+.errmsg{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#c3cae6;margin-top:4px;overflow-wrap:anywhere}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 4px}
+.warnbox{margin:12px 0 0;padding:12px;border-radius:10px;background:rgba(255,159,67,.08);border:1px solid rgba(255,159,67,.3);font-size:13px;line-height:1.5}
+.warnbox b{color:var(--warn)}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-top:10px;text-transform:none;letter-spacing:0;color:var(--text)}
+.chk input{width:18px;height:18px;flex:none;margin-top:1px}
 .rep-tab{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
 .rep-tab td{padding:8px 4px;border-bottom:1px solid var(--line)}
 .rep-tab td.r{text-align:right;white-space:nowrap}
@@ -141,7 +155,12 @@ var ICON = {
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function pad(n){ return (n<10?'0':'')+n; }
-function errText(e){ return (e && (e.message || e.error_description || e.hint)) || 'Xəta baş verdi'; }
+function errText(e){
+  var m=(e && (e.message || e.error_description || e.hint)) || 'Xəta baş verdi';
+  if(/app_release_min_le_version/.test(m)) return 'Bu versiya məcburi minimum versiyadan köhnədir. Əvvəl məcburi yeniləməni söndürün.';
+  if(/Could not find the function|does not exist/.test(m) && /cleanup_pending|report_errors|audit_log|app_settings|client_errors/.test(m)) return 'Supabase-də v2.7.0 miqrasiyası işlədilməyib.';
+  return m;
+}
 
 /* ---- Bakı vaxtı (UTC+4, yay vaxtı yoxdur) ---- */
 var OFF = 4*3600*1000;
@@ -251,7 +270,9 @@ function renderMain(){
     '<div class="wrap">'+
       '<div id="banner"></div>'+
       '<div class="stats" id="stats"></div>'+
-      '<div class="tools"><button class="btn" id="rep">📊 Aylıq hesabat</button><button class="btn" id="upd">⬆ Tətbiq yeniləməsi</button></div>'+
+      '<div class="tools"><button class="btn" id="rep">📊 Aylıq hesabat</button><button class="btn" id="upd">⬆ Tətbiq yeniləməsi</button>'+
+        '<button class="btn" id="act">🕘 Fəaliyyət tarixçəsi</button><button class="btn" id="errs">⚠ Sistem xətaları</button>'+
+        '<button class="btn" id="cfgr">⚙ Qeydiyyat və ayarlar</button></div>'+
       '<div class="search">'+ICON.search+'<input id="q" placeholder="ID, ad, telefon və ya MAC" autocomplete="off"></div>'+
       '<div class="chips" id="chips"></div>'+
       '<div class="list" id="list"><div class="empty">Yüklənir…</div></div>'+
@@ -259,6 +280,9 @@ function renderMain(){
   document.getElementById('rf').onclick=load;
   document.getElementById('rep').onclick=openReport;
   document.getElementById('upd').onclick=openRelease;
+  document.getElementById('act').onclick=function(){ openActivity(); };
+  document.getElementById('errs').onclick=openErrors;
+  document.getElementById('cfgr').onclick=openSettings;
   document.getElementById('lo').onclick=async function(){ await sb.auth.signOut(); boot(); };
   var q=document.getElementById('q'); q.value=query;
   q.oninput=function(){ query=q.value; renderList(); };
@@ -441,6 +465,7 @@ function openDevice(id){
       '<button class="btn primary block" id="ic">Quraşdırıcı kodu yarat</button></div>'+
 
     '<div class="sec"><h3>Ödəniş tarixçəsi</h3><div id="pays" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
+    '<div class="sec"><h3>Fəaliyyət tarixçəsi</h3><div id="dlog" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
 
     '<div class="sec"><h3>Əlavə</h3>'+
       (d.blocked
@@ -488,6 +513,7 @@ function openDevice(id){
     current=null; closeSheet(); toast('Silindi');
   });
   loadPayments(d.id);
+  loadDeviceLog(d.id);
 }
 
 /* ---- Aylıq hesabat ---- */
@@ -545,7 +571,8 @@ async function openRelease(){
       '<button class="btn primary block" id="go">Yüklə və TV-lərə göndər</button>'+
       '<div class="hint">TV-lər 5 dəqiqə ərzində "Yeni versiya var — Yenilə" görəcək. Versiya nömrəsi APK-dakı ilə eyni olmalıdır, əks halda TV faylı qəbul etməz.</div>'+
       (cur?'<button class="btn danger block" id="stop">Yeniləmə təklifini dayandır</button>':'')+
-    '</div>';
+    '</div>'+
+    (cur ? minVersionHtml(cur) : '');
   var vn=box.querySelector('#vn'), apk=box.querySelector('#apk');
   /* the version is read from the APK itself (assets/public/appinfo.json) */
   apk.onchange=async function(){
@@ -580,7 +607,242 @@ async function openRelease(){
     openRelease();
   });
   var stop=box.querySelector('#stop');
-  if(stop) stop.onclick=guard(async function(){ if(!confirm('TV-lərə yeniləmə təklifi dayandırılsın?')) return 'skip'; var d=await sb.from('app_release').delete().eq('id',1); if(d.error) throw d.error; toast('Dayandırıldı'); openRelease(); });
+  if(stop) stop.onclick=guard(async function(){ if(!confirm('TV-lərə yeniləmə təklifi dayandırılsın?'+(cur.min_version_code?' Məcburi yeniləmə də söndürüləcək.':''))) return 'skip'; var d=await sb.from('app_release').delete().eq('id',1); if(d.error) throw d.error; toast('Dayandırıldı'); openRelease(); });
+  if(cur) wireMinVersion(box, cur);
+}
+
+/* ================= v2.7: məcburi yeniləmə ================= */
+function versionStats(code){
+  var below=0, belowActive=0, byVer={}, unknown=0;
+  devices.forEach(function(d){
+    var c=verCode(d.app_version);
+    if(!c){ unknown++; return; }
+    if(c<code){ below++; if(statusOf(d)==='active') belowActive++; byVer[d.app_version]=(byVer[d.app_version]||0)+1; }
+  });
+  return { below:below, belowActive:belowActive, byVer:byVer, unknown:unknown };
+}
+function minVersionHtml(cur){
+  var on=cur.min_version_code>0;
+  var st=versionStats(cur.version_code);
+  var latestOn=devices.filter(function(d){ return verCode(d.app_version)>=cur.version_code; }).length;
+  var vers=Object.keys(st.byVer).sort().map(function(v){ return esc(v)+': '+st.byVer[v]; }).join(' · ');
+  return '<div class="sec"><h3>Məcburi yeniləmə</h3>'+
+    (on ? '<div class="warnbox" style="margin-top:0"><b>Aktivdir:</b> '+esc(cur.version_name)+'-dən köhnə tətbiqlər yeniləmə ekranını görür'+
+            (cur.min_version_set_at?' (təyin: '+fmtDT(cur.min_version_set_at)+')':'')+'.'+(cur.min_version_note?'<br>Qeyd: '+esc(cur.min_version_note):'')+'</div>'+
+          '<button class="btn block" id="mvoff">Məcburi yeniləməni söndür</button>'
+        : '<div class="hint" style="margin-top:0">Söndürülüb. Müştərilər "Sonra" seçə bilir.</div>'+
+          '<div class="kv"><div><small>'+esc(cur.version_name)+' quraşdırılıb</small>'+latestOn+' cihaz</div><div><small>Köhnə versiyada</small>'+st.below+' cihaz ('+st.belowActive+' aktiv)</div></div>'+
+          (vers?'<div class="hint" style="margin-top:0">Köhnə versiyalar: '+vers+'</div>':'')+
+          '<label>Müştəriyə səbəb (istəyə bağlı)</label><input id="mvnote" maxlength="200" placeholder="məs. Vacib təhlükəsizlik yeniləməsi">'+
+          '<label class="chk"><input type="checkbox" id="mvchk">'+esc(cur.version_name)+' versiyasını öz cihazımda quraşdırıb yoxladım</label>'+
+          '<button class="btn danger block" id="mvon">'+esc(cur.version_name)+' versiyasını məcburi et</button>'+
+          '<div class="hint">2.7.0 və yeni tətbiqlərdə "Sonra" düyməsi olmayan tam ekran yeniləmə açılır. 2.6.0 və köhnə tətbiqlər adi təklif görür, amma quraşdırıcı kodu onlarda işləmir. Abunəlik bloklanmır.</div>')+
+    '</div>';
+}
+function wireMinVersion(box, cur){
+  var on=box.querySelector('#mvon'), off=box.querySelector('#mvoff');
+  if(on) on.onclick=guard(async function(){
+    if(!box.querySelector('#mvchk').checked){ toast('Əvvəl yeni versiyanı öz cihazınızda yoxlayın və işarələyin',{bad:true}); return 'skip'; }
+    var st=versionStats(cur.version_code);
+    var latestOn=devices.filter(function(d){ return verCode(d.app_version)>=cur.version_code; }).length;
+    if(!latestOn){ toast('Heç bir cihazda hələ '+cur.version_name+' yoxdur. Əvvəl öz cihazınızı yeniləyin.',{bad:true}); return 'skip'; }
+    var msg=cur.version_name+' MƏCBURİ olsun?\n\n'+st.below+' cihaz ('+st.belowActive+' aktiv müştəri) köhnə versiyadadır. '+
+      '2.7.0+ olanlar növbəti yoxlamada (5 dəq) "Sonra"sız yeniləmə ekranı görəcək.\n\nTəsdiq üçün TƏSDİQ yazın:';
+    var typed=prompt(msg,''); if(typed===null) return 'skip';
+    if(String(typed).trim().toUpperCase()!=='TƏSDİQ' && String(typed).trim().toUpperCase()!=='TESDIQ'){ toast('Təsdiq sözü düzgün yazılmadı — heç nə dəyişmədi',{bad:true}); return 'skip'; }
+    var note=(box.querySelector('#mvnote').value||'').trim()||null;
+    var r=await sb.from('app_release').update({ min_version_code:cur.version_code, min_version_note:note, min_version_set_at:new Date().toISOString() }).eq('id',1);
+    if(r.error) throw r.error;
+    toast('Məcburi yeniləmə aktivdir'); openRelease();
+  });
+  if(off) off.onclick=guard(async function(){
+    if(!confirm('Məcburi yeniləmə söndürülsün? Müştərilər yenə "Sonra" seçə biləcək.')) return 'skip';
+    var r=await sb.from('app_release').update({ min_version_code:0, min_version_note:null }).eq('id',1);
+    if(r.error) throw r.error;
+    toast('Söndürüldü'); openRelease();
+  });
+}
+
+/* ================= v2.7: fəaliyyət tarixçəsi ================= */
+var ACT={ activate:'✅ Aktivləşdirildi', payment_add:'💳 Ödəniş', trial:'🧪 Sınaq günləri', payment_undo:'↩ Ödəniş geri alındı',
+  block:'⛔ Bloklandı', unblock:'🔓 Blok açıldı', expiry_set:'📅 Son gün dəyişdi', customer_edit:'✏ Müştəri məlumatı',
+  key_reset:'🔑 Cihaz açarı sıfırlandı', pin_reset:'🔢 PIN sıfırlandı', message:'✉ Mesaj göndərildi', message_delete:'✉ Mesaj silindi',
+  device_delete:'🗑 Cihaz silindi', pending_cleanup:'🧹 Köhnə qeyd təmizləndi', installer_code:'🛠 Quraşdırıcı kodu',
+  release_publish:'⬆ Yeniləmə göndərildi', release_stop:'⏹ Yeniləmə dayandırıldı', min_version_set:'❗ Məcburi versiya',
+  settings_change:'⚙ Ayarlar dəyişdi', registration_window:'🚪 Qeydiyyat pəncərəsi' };
+var FIELD={ customer_name:'Ad', phone:'Telefon', note:'Qeyd', reg_limit_10min:'10 dəq limiti', reg_limit_day:'Gündəlik limit',
+  reg_window_until:'Pəncərə', reg_window_limit:'Pəncərə limiti', pending_cleanup_days:'Təmizləmə (gün)', err_daily_quota:'Xəta kvotası' };
+function vcName(c){ c=+c||0; return c ? Math.floor(c/10000)+'.'+Math.floor(c%10000/100)+'.'+(c%100) : 'söndürülüb'; }
+function dayOrDash(v){ return v ? lastDayShort(Date.parse(v)) : '—'; }
+function logDetails(l){
+  var x=l.details||{};
+  switch(l.action){
+    case 'activate': case 'payment_add': case 'trial':
+      return (x.months? x.months+' ay' : x.days+' gün')+(x.amount!=null?' · '+Number(x.amount).toFixed(2)+' ₼':'')+' · '+dayOrDash(x.from)+' → '+dayOrDash(x.to)+(x.note?' · '+esc(x.note):'');
+    case 'payment_undo': return (x.months? x.months+' ay' : x.days+' gün')+(x.amount!=null?' · '+Number(x.amount).toFixed(2)+' ₼':'')+' · son gün yenə: '+dayOrDash(x.restored_to);
+    case 'block': return x.reason ? 'Səbəb: '+esc(x.reason) : '';
+    case 'expiry_set': return dayOrDash(x.from)+' → '+dayOrDash(x.to);
+    case 'customer_edit': return Object.keys(x).map(function(k){ return esc(FIELD[k]||k)+': '+esc(x[k].old==null?'—':x[k].old)+' → '+esc(x[k].new==null?'—':x[k].new); }).join('<br>');
+    case 'message': return esc(x.text||'');
+    case 'device_delete': case 'pending_cleanup': return (x.customer_name?esc(x.customer_name)+' · ':'')+'ilk dəfə: '+(x.first_seen?fmtDT(x.first_seen).slice(0,10):'—');
+    case 'installer_code': return (x.valid_minutes||15)+' dəq etibarlı';
+    case 'release_publish': return 'Versiya '+esc(x.version_name)+(x.notes?' · '+esc(x.notes):'');
+    case 'release_stop': return 'Versiya '+esc(x.version_name||'');
+    case 'min_version_set': return vcName(x.from)+' → '+vcName(x.to)+(x.note?' · '+esc(x.note):'');
+    case 'settings_change': case 'registration_window':
+      return Object.keys(x).map(function(k){ var o=x[k].old, n=x[k].new; if(k==='reg_window_until'){ o=o?fmtDT(o):'bağlı'; n=n?fmtDT(n):'bağlı'; } return esc(FIELD[k]||k)+': '+esc(o==null?'—':o)+' → '+esc(n==null?'—':n); }).join('<br>');
+  }
+  return '';
+}
+function logRow(l, withCustomer){
+  var byNo={}; devices.forEach(function(d){ byNo[d.customer_no]=d; });
+  var d=l.customer_no!=null ? byNo[l.customer_no] : null;
+  var who=(l.admin_email||'—').replace(/@.*/,'');
+  var cust=withCustomer && l.customer_no!=null ? '#'+l.customer_no+(d && d.customer_name?' · '+esc(d.customer_name):'')+' · ' : '';
+  var det=logDetails(l);
+  return '<div class="logrow"><div class="h"><b>'+esc(ACT[l.action]||l.action)+'</b><span class="w">'+fmtDT(l.at)+'</span></div>'+
+    (det?'<div class="d">'+det+'</div>':'')+'<div class="m">'+cust+'admin: '+esc(who)+'</div></div>';
+}
+var actFilter={ admin:'', action:'', q:'' };
+async function openActivity(){
+  var bg=sheet('activity');
+  bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Fəaliyyət tarixçəsi</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div>'+
+    '<div class="hint" style="margin-top:0">Hər iki adminin bütün əməliyyatları. Serverdə yazılır, heç kim dəyişə və silə bilməz.</div>'+
+    '<div id="al" class="hint">Yüklənir…</div></div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  var r=await sb.from('audit_log').select('*').order('at',{ascending:false}).limit(500);
+  var box=bg.querySelector('#al'); if(!box) return;
+  if(r.error){ box.textContent=errText(r.error); return; }
+  var rows=r.data||[];
+  var admins={}; rows.forEach(function(l){ if(l.admin_email) admins[l.admin_email]=1; });
+  function draw(){
+    var q=actFilter.q.replace(/[#\s]/g,'');
+    var list=rows.filter(function(l){
+      if(actFilter.admin && l.admin_email!==actFilter.admin) return false;
+      if(actFilter.action && l.action!==actFilter.action) return false;
+      if(q && String(l.customer_no||'').indexOf(q)<0) return false;
+      return true;
+    });
+    box.querySelector('#alist').innerHTML = list.length ? list.slice(0,300).map(function(l){ return logRow(l,true); }).join('') : '<div class="empty">Qeyd yoxdur.</div>';
+  }
+  box.className='';
+  box.innerHTML='<div class="filters"><select id="fa"><option value="">Bütün adminlər</option>'+Object.keys(admins).map(function(a){ return '<option'+(actFilter.admin===a?' selected':'')+'>'+esc(a)+'</option>'; }).join('')+'</select>'+
+    '<select id="ft"><option value="">Bütün əməliyyatlar</option>'+Object.keys(ACT).map(function(k){ return '<option value="'+k+'"'+(actFilter.action===k?' selected':'')+'>'+esc(ACT[k])+'</option>'; }).join('')+'</select></div>'+
+    '<input id="fq" placeholder="Müştəri ID (məs. 1001)" inputmode="numeric" value="'+esc(actFilter.q)+'">'+
+    '<div id="alist" style="margin-top:8px"></div>';
+  box.querySelector('#fa').onchange=function(e){ actFilter.admin=e.target.value; draw(); };
+  box.querySelector('#ft').onchange=function(e){ actFilter.action=e.target.value; draw(); };
+  box.querySelector('#fq').oninput=function(e){ actFilter.q=e.target.value; draw(); };
+  draw();
+}
+async function loadDeviceLog(id){
+  var r=await sb.from('audit_log').select('*').eq('device_id',id).order('at',{ascending:false}).limit(20);
+  var el=document.getElementById('dlog'); if(!el || current!==id) return;
+  if(r.error){ el.textContent=errText(r.error); return; }
+  el.className=''; el.innerHTML = (r.data||[]).length ? r.data.map(function(l){ return logRow(l,false); }).join('') : '<div class="hint" style="margin-top:0">Hələ qeyd yoxdur.</div>';
+}
+
+/* ================= v2.7: sistem xətaları ================= */
+var errFilter={ kind:'', ver:'', model:'' };
+var KIND={ js:['JS','warn'], native:['Native','bad'], update:['Yeniləmə','wait'], other:['Digər','ok'] };
+async function openErrors(){
+  var bg=sheet('errors');
+  bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Sistem xətaları</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div>'+
+    '<div class="hint" style="margin-top:0">Tətbiqlərin göndərdiyi xətalar (eyni xəta bir sətirdə, sayı ilə). Linklər, loginlər və parollar göndərilmir.</div>'+
+    '<div id="el" class="hint">Yüklənir…</div></div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  var r=await sb.from('client_errors').select('*').order('last_seen',{ascending:false}).limit(500);
+  var box=bg.querySelector('#el'); if(!box) return;
+  if(r.error){ box.textContent=errText(r.error); return; }
+  var rows=r.data||[];
+  var vers={}, models={}; rows.forEach(function(e){ if(e.app_version) vers[e.app_version]=1; if(e.model) models[e.model]=1; });
+  function filtered(){ return rows.filter(function(e){ return (!errFilter.kind||e.kind===errFilter.kind) && (!errFilter.ver||e.app_version===errFilter.ver) && (!errFilter.model||e.model===errFilter.model); }); }
+  function draw(){
+    var list=filtered(), total=list.reduce(function(a,e){ return a+(e.count||0); },0);
+    box.querySelector('#elist').innerHTML = list.length ? '<div class="hint" style="margin-top:0">'+list.length+' fərqli xəta · cəmi '+total+' dəfə</div>'+list.map(function(e){
+      var k=KIND[e.kind]||KIND.other;
+      return '<div class="logrow"><div class="h"><b><span class="pill '+k[1]+'">'+k[0]+'</span> '+esc(e.code||'Xəta')+'</b><span class="w">× '+(e.count||1)+'</span></div>'+
+        '<div class="errmsg">'+esc(e.message||'')+'</div>'+
+        '<div class="m">'+esc([e.app_version?'v'+e.app_version:'', e.model, e.android?'Android '+e.android:''].filter(Boolean).join(' · '))+'</div>'+
+        '<div class="m">Son: '+fmtDT(e.last_seen)+' · ilk: '+fmtDT(e.first_seen)+'</div></div>';
+    }).join('') : '<div class="empty">Xəta yoxdur ✓</div>';
+    var c=box.querySelector('#eclr'); if(c) c.textContent=list.length ? 'Görünən '+list.length+' xətanı təmizlə' : 'Təmizlə';
+  }
+  box.className='';
+  box.innerHTML='<div class="chips">'+[['','Hamısı'],['js','JS'],['native','Native'],['update','Yeniləmə']].map(function(x){ return '<button class="chip'+(errFilter.kind===x[0]?' on':'')+'" data-k="'+x[0]+'">'+x[1]+'</button>'; }).join('')+'</div>'+
+    '<div class="filters"><select id="fv"><option value="">Bütün versiyalar</option>'+Object.keys(vers).sort().reverse().map(function(v){ return '<option'+(errFilter.ver===v?' selected':'')+'>'+esc(v)+'</option>'; }).join('')+'</select>'+
+    '<select id="fm"><option value="">Bütün modellər</option>'+Object.keys(models).sort().map(function(m){ return '<option'+(errFilter.model===m?' selected':'')+'>'+esc(m)+'</option>'; }).join('')+'</select></div>'+
+    '<div id="elist"></div><button class="btn danger block" id="eclr">Təmizlə</button>';
+  box.querySelectorAll('[data-k]').forEach(function(b){ b.onclick=function(){ errFilter.kind=b.getAttribute('data-k'); box.querySelectorAll('[data-k]').forEach(function(x){ x.classList.toggle('on', x===b); }); draw(); }; });
+  box.querySelector('#fv').onchange=function(e){ errFilter.ver=e.target.value; draw(); };
+  box.querySelector('#fm').onchange=function(e){ errFilter.model=e.target.value; draw(); };
+  box.querySelector('#eclr').onclick=guard(async function(){
+    var ids=filtered().map(function(e){ return e.id; });
+    if(!ids.length) return 'skip';
+    if(!confirm(ids.length+' xəta qeydi silinsin? (Yalnız siyahıdan silinir; təkrarlansa yenidən görünəcək.)')) return 'skip';
+    var d=await sb.from('client_errors').delete().in('id', ids); if(d.error) throw d.error;
+    toast('Təmizləndi'); openErrors();
+  });
+  draw();
+}
+
+/* ================= v2.7: qeydiyyat və ayarlar ================= */
+async function openSettings(){
+  var bg=sheet('settings');
+  bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Qeydiyyat və ayarlar</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div><div id="sl" class="hint">Yüklənir…</div></div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  var r=await sb.from('app_settings').select('*').eq('id',1).maybeSingle();
+  var box=bg.querySelector('#sl'); if(!box) return;
+  if(r.error || !r.data){ box.textContent=r.error?errText(r.error):'Supabase-də v2.7.0 miqrasiyası işlədilməyib.'; return; }
+  var s=r.data;
+  var open=s.reg_window_until && Date.parse(s.reg_window_until)>Date.now();
+  var day=Date.now()-864e5, tenMin=Date.now()-6e5;
+  var new24=devices.filter(function(d){ return Date.parse(d.first_seen)>day; }).length;
+  var new10=devices.filter(function(d){ return Date.parse(d.first_seen)>tenMin; }).length;
+  box.className='';
+  box.innerHTML=
+    '<div class="sec" style="border-top:0;margin-top:0;padding-top:0"><h3>Yeni cihaz qeydiyyatı</h3>'+
+      (open ? '<div class="preview" style="margin-top:0"><b>Quraşdırıcı pəncərəsi açıqdır</b> — '+fmtDT(s.reg_window_until).slice(11)+'-a qədər (limit: 10 dəqiqədə '+s.reg_window_limit+')</div>'
+            : '<div class="hint" style="margin-top:0">Normal rejim: 10 dəqiqədə ən çox '+s.reg_limit_10min+', gündə ən çox '+s.reg_limit_day+' yeni cihaz. Limit dolanda yeni TV "Cihaz aktiv deyil" ekranını göstərir və 5 dəqiqədən bir yenidən cəhd edir.</div>')+
+      '<div class="kv"><div><small>Son 10 dəqiqədə yeni</small>'+new10+'</div><div><small>Son 24 saatda yeni</small>'+new24+'</div></div>'+
+      '<div class="rowbtns"><button class="btn primary" data-w="30">30 dəq aç</button><button class="btn" data-w="120">2 saat aç</button>'+(open?'<button class="btn" data-w="0">Bağla</button>':'')+'</div>'+
+      '<div class="hint">Çox TV quraşdıranda pəncərəni açın: limitlər müvəqqəti artır. Mövcud müştərilərə heç bir limit təsir etmir.</div></div>'+
+    '<div class="sec"><h3>Limitlər</h3><div class="grid2">'+
+      '<div><label>10 dəqiqədə yeni cihaz</label><input id="l10" type="number" min="1" max="1000" value="'+s.reg_limit_10min+'"></div>'+
+      '<div><label>Gündə yeni cihaz</label><input id="lday" type="number" min="1" max="10000" value="'+s.reg_limit_day+'"></div>'+
+      '<div><label>Pəncərədə (10 dəq)</label><input id="lwin" type="number" min="1" max="2000" value="'+s.reg_window_limit+'"></div>'+
+      '<div><label>Xəta kvotası (gündə/cihaz)</label><input id="lerr" type="number" min="0" max="1000" value="'+s.err_daily_quota+'"></div></div>'+
+      '<button class="btn block" id="lsv">Limitləri yadda saxla</button></div>'+
+    '<div class="sec"><h3>Köhnə gözləyən qeydlər</h3>'+
+      '<label>Neçə gün aktivləşdirilməyən boş qeydlər təmizlənsin</label><input id="cdays" type="number" min="7" max="365" value="'+s.pending_cleanup_days+'">'+
+      '<div class="hint">Yalnız bu qeydlər silinir: heç vaxt aktivləşdirilməyib, ödənişi yoxdur, bloklanmayıb, adı / telefonu / qeydi yazılmayıb və bu müddətdə serverə qoşulmayıb. Ödənişi və tarixçəsi olan müştəri heç vaxt silinmir.</div>'+
+      '<button class="btn block" id="cprev">Yoxla (heç nə silinmir)</button><div id="cres"></div></div>';
+  box.querySelectorAll('[data-w]').forEach(function(b){ b.onclick=guard(async function(){
+    var m=+b.getAttribute('data-w');
+    var w=await sb.from('app_settings').update({ reg_window_until: m ? new Date(Date.now()+m*60000).toISOString() : null }).eq('id',1);
+    if(w.error) throw w.error; toast(m ? 'Qeydiyyat pəncərəsi '+(m>=60?(m/60)+' saat':m+' dəqiqə')+' açıqdır' : 'Pəncərə bağlandı'); openSettings();
+  }); });
+  box.querySelector('#lsv').onclick=guard(async function(){
+    var v={ reg_limit_10min:+box.querySelector('#l10').value, reg_limit_day:+box.querySelector('#lday').value, reg_window_limit:+box.querySelector('#lwin').value, err_daily_quota:+box.querySelector('#lerr').value };
+    if(!(v.reg_limit_10min>=1 && v.reg_limit_day>=1 && v.reg_window_limit>=1 && v.err_daily_quota>=0)){ toast('Rəqəmləri yoxlayın',{bad:true}); return 'skip'; }
+    var w=await sb.from('app_settings').update(v).eq('id',1); if(w.error) throw w.error; toast('Yadda saxlanıldı'); openSettings();
+  });
+  box.querySelector('#cprev').onclick=guard(async function(){
+    var days=+box.querySelector('#cdays').value;
+    if(!(days>=7 && days<=365)){ toast('Gün sayı 7–365 arası olmalıdır',{bad:true}); return 'skip'; }
+    if(days!==s.pending_cleanup_days){ var w=await sb.from('app_settings').update({ pending_cleanup_days:days }).eq('id',1); if(w.error) throw w.error; s.pending_cleanup_days=days; }
+    var p=await sb.rpc('cleanup_pending_devices',{ p_apply:false }); if(p.error) throw p.error;
+    var res=box.querySelector('#cres'), n=p.data.count;
+    res.innerHTML = n ? '<div class="warnbox"><b>'+n+' qeyd</b> təmizlənə bilər: '+p.data.customer_nos.map(function(x){ return '#'+x; }).join(', ')+(n>50?' …':'')+'</div><button class="btn danger block" id="capply">'+n+' qeydi sil</button>'
+                      : '<div class="preview">Təmizlənəcək qeyd yoxdur ✓</div>';
+    var a=res.querySelector('#capply');
+    if(a) a.onclick=guard(async function(){
+      if(!confirm(n+' boş "Yeni" qeyd silinsin? Hər biri fəaliyyət tarixçəsinə yazılacaq.')) return 'skip';
+      var q=await sb.rpc('cleanup_pending_devices',{ p_apply:true }); if(q.error) throw q.error;
+      toast(q.data.count+' qeyd təmizləndi'); openSettings();
+    });
+    return 'skip';
+  });
 }
 
 function guard(fn){
