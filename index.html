@@ -394,6 +394,14 @@ async function undoLast(deviceId){
 }
 
 /* ---- Müştəri kartı ---- */
+var instCode=null; /* {id, code, until} — shown only in this browser tab, never stored */
+function instCodeHtml(d){
+  if(instCode && instCode.id===d.id && Date.now()<instCode.until){
+    var u=new Date(instCode.until);
+    return 'Kod: <b class="mono" style="font-size:22px;letter-spacing:4px">'+esc(instCode.code)+'</b><br>'+pad(u.getHours())+':'+pad(u.getMinutes())+'-a qədər etibarlıdır, bir dəfə istifadə olunur. Kodu heç yerə yazmayın.';
+  }
+  return 'Müştərinin cihazında playlist əlavə etmək, dəyişmək və ya silmək üçün birdəfəlik 6 rəqəmli kod. 15 dəqiqə etibarlıdır, 5 səhv cəhddən sonra bağlanır, bir dəfə istifadə olunur.';
+}
 function openDevice(id){
   var d=devices.find(function(x){ return x.id===id; }); if(!d) return;
   current=id;
@@ -428,6 +436,10 @@ function openDevice(id){
       '<div class="rowbtns"><button class="btn primary" id="msgs">Göndər</button>'+(d.notice?'<button class="btn" id="msgc">Mesajı sil</button>':'')+'</div>'+
       '<div class="hint">5 dəqiqə ərzində (və ya proqram açılanda) TV-də bir dəfə göstərilir.</div></div>'+
 
+    '<div class="sec"><h3>Quraşdırıcı kodu (playlist dəyişmək üçün)</h3>'+
+      '<div id="icbox" class="hint" style="margin-top:0">'+instCodeHtml(d)+'</div>'+
+      '<button class="btn primary block" id="ic">Quraşdırıcı kodu yarat</button></div>'+
+
     '<div class="sec"><h3>Ödəniş tarixçəsi</h3><div id="pays" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
 
     '<div class="sec"><h3>Əlavə</h3>'+
@@ -461,6 +473,13 @@ function openDevice(id){
   });
   $('#msgs').onclick=guard(async function(){ var m=$('#msg').value.trim(); if(!m){ toast('Mesaj yazın',{bad:true}); return 'skip'; } await upd(d.id,{ notice:m.slice(0,500), notice_at:new Date().toISOString() }); toast('Mesaj göndərildi'); });
   if(d.notice) $('#msgc').onclick=guard(async function(){ await upd(d.id,{ notice:null, notice_at:null }); toast('Mesaj silindi'); });
+  $('#ic').onclick=guard(async function(){
+    var r=await sb.rpc('create_installer_code',{ p_device_id:d.id }); if(r.error) throw r.error;
+    var code=String(r.data||''); if(!/^\d{6}$/.test(code)) throw new Error('Kod alınmadı');
+    instCode={ id:d.id, code:code, until:Date.now()+15*60000 };
+    $('#icbox').innerHTML=instCodeHtml(d);
+    toast('Kod yaradıldı');
+  });
   $('#pr').onclick=guard(async function(){ if(!confirm(label(d)+' — uşaq kilidinin PIN-i 0000 olsun?')) return 'skip'; await upd(d.id,{ pin_reset_at:new Date().toISOString() }); toast('PIN sıfırlanır — 5 dəq ərzində 0000 olacaq'); });
   $('#rk').onclick=guard(async function(){ if(!confirm('Cihaz açarı sıfırlansın?')) return 'skip'; await upd(d.id,{ device_key:null }); toast('Açar sıfırlandı'); });
   $('#del').onclick=guard(async function(){
