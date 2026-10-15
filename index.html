@@ -75,6 +75,9 @@ header .t small{color:var(--muted);font-size:12px}
 .pill.wait{background:rgba(255,196,77,.15);color:var(--wait)}
 .pill.warn{background:rgba(255,159,67,.15);color:var(--warn)}
 .pill.bad{background:rgba(255,92,92,.15);color:var(--bad)}
+.pill.arch{background:rgba(142,151,184,.15);color:var(--muted)}
+.payh.void{opacity:.55}
+.archbox{margin:12px 0 0;padding:12px;border-radius:10px;background:rgba(142,151,184,.08);border:1px solid rgba(142,151,184,.35);font-size:13px;line-height:1.5}
 .empty{text-align:center;color:var(--muted);padding:40px 10px;line-height:1.5}
 
 .sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;display:flex;align-items:flex-end;justify-content:center}
@@ -131,6 +134,120 @@ header .t small{color:var(--muted);font-size:12px}
 .mgrid b{font-size:20px}
 .sheet a{color:#9db0ff}
 @media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}.months{grid-template-columns:repeat(5,1fr)}.months .btn{font-size:12px}}
+
+/* ===== v2.9.1: sadə görünüş ===== */
+.chip.fc{flex-direction:row!important;align-items:center!important;gap:6px!important;border-radius:999px!important;padding:7px 13px!important}
+.chip.fc b{font-size:14px!important}
+.chip.fc span{font-size:13px!important;text-transform:none!important;letter-spacing:0!important;font-weight:600!important;color:inherit!important}
+.fcards{display:flex!important;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:6px!important}
+.fcards::-webkit-scrollbar{display:none}
+.subline{color:var(--muted);font-size:13px;margin-top:4px;line-height:1.5}
+.subline b{color:var(--text);font-weight:600}
+.fold{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:0 12px;background:rgba(255,255,255,.015)}
+.fold>summary{cursor:pointer;list-style:none;padding:12px 0;font-size:13px;font-weight:700;color:#c3cae6}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::before{content:"▸ ";color:var(--muted)}
+.fold[open]>summary::before{content:"▾ "}
+.fold[open]{padding-bottom:12px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.kpi div{background:var(--panel2);border-radius:12px;padding:12px}
+.kpi b{display:block;font-size:20px}
+.kpi span{font-size:12px;color:var(--muted)}
+.alertline{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(255,196,77,.08);border:1px solid rgba(255,196,77,.25);font-size:13px}
+.btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:-3px;margin-right:4px}
+.morelist .btn{display:flex;width:100%;justify-content:flex-start;gap:10px;margin-top:8px;text-align:left}
+.morelist svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+@media (max-width:999px){
+  .row.named .c-mac{display:none}
+  .side{position:fixed!important;top:auto!important;bottom:0;left:0;right:0;border-bottom:0!important;border-top:1px solid var(--line);z-index:20}
+  .nav{justify-content:space-around;padding:4px 4px calc(4px + env(safe-area-inset-bottom))!important;gap:0!important;overflow:visible!important}
+  .nv{flex:1 1 0!important;flex-direction:column;gap:3px!important;border:0!important;background:none!important;border-radius:10px!important;padding:6px 2px!important;font-size:11px!important;color:var(--muted)!important}
+  .nv.on{color:#fff!important;background:rgba(79,107,255,.16)!important}
+  .nv svg{width:21px!important;height:21px!important}
+  .nv.more-only,.nvsep{display:none!important}
+  body{padding-bottom:72px}
+  .toast{bottom:84px!important}
+}
+@media (min-width:1000px){ #more{display:none!important} }
+/* ===== v2.8.1 layout: menu + content ===== */
+[hidden]{display:none!important}
+.row .pay-btn{width:112px}
+.row .pay-spacer{width:112px;flex:none}
+@media (max-width:999px){ .row .pay-spacer{display:none} }
+@media (min-width:1000px){ .sheet .kv{grid-template-columns:repeat(3,1fr)} }
+.shell{min-height:100vh}
+.side{position:sticky;top:0;z-index:6;background:#0e1222;border-bottom:1px solid var(--line)}
+.side-brand{display:none}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nv{flex:none;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.nv svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.nv.on{background:var(--accent);border-color:var(--accent)}
+.nvsep{display:none}
+.mainc header{position:static}
+@media (min-width:1000px){
+  .shell{display:grid;grid-template-columns:248px 1fr}
+  .side{position:sticky;top:0;height:100vh;border-bottom:0;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px}
+  .side-brand{display:block;padding:4px 12px 18px}
+  .side-brand b{display:block;font-size:20px;letter-spacing:.08em}
+  .side-brand small{color:var(--muted);font-size:12px}
+  .nav{flex-direction:column;overflow:visible;padding:0;gap:2px}
+  .nv{border:0;background:none;border-radius:10px;padding:11px 12px;font-size:14px;color:#c3cae6}
+  .nv:hover{background:var(--panel)}
+  .nv.on{background:rgba(79,107,255,.16);color:#fff}
+  .nv.on svg{opacity:1;stroke:#9db0ff}
+  .nvsep{display:block;margin:16px 12px 6px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .mainc header{position:sticky;top:0}
+  .mainc header .in,.mainc .wrap{max-width:1180px;padding-left:28px;padding-right:28px}
+  .mainc header .t b{font-size:20px}
+}
+/* counters = filters */
+.fcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;overflow:visible;margin-bottom:12px;padding:0}
+.chip.fc{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:12px;padding:10px 12px;text-align:left}
+.chip.fc b{font-size:20px}
+.chip.fc span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.chip.fc.wait b{color:var(--wait)} .chip.fc.ok b{color:var(--ok)} .chip.fc.warn b{color:var(--warn)} .chip.fc.bad b{color:var(--bad)} .chip.fc.new b{color:#9db0ff}
+.chip.fc.on{background:rgba(79,107,255,.16);border-color:var(--accent)}
+.chip.fc.on b{color:#fff}
+.due-banner .go{font-size:13px;font-weight:700;color:var(--wait);white-space:nowrap}
+.due-banner strong{font-size:14px}
+.row .nm.noname{color:var(--muted);font-style:italic}
+.row .l2 span:empty{display:none}
+.row .l2 span+span:not(:empty)::before{content:" · "}
+@media (min-width:1000px){
+  .row{padding:12px 12px 12px 18px}
+  .row .main{display:grid;grid-template-columns:minmax(220px,1.4fr) 3fr;align-items:center;gap:16px}
+  .row .l2{margin-top:0;display:grid;grid-template-columns:1.1fr 1fr 1fr 1.2fr;gap:12px;font-size:13px}
+  .row .l2 span{display:block!important;overflow:hidden;text-overflow:ellipsis}
+  .row .l2 span+span::before{content:none!important}
+  .row .l2 span:empty::after{content:"—";opacity:.4}
+  .row:hover{border-color:rgba(79,107,255,.35)}
+}
+/* tabs inside a window */
+.tabbar{display:flex;gap:4px;overflow-x:auto;margin:14px -2px 4px;padding:4px;background:var(--panel2);border-radius:12px;scrollbar-width:none;position:sticky;top:-18px;z-index:2}
+.tabbar::-webkit-scrollbar{display:none}
+.tb{flex:1 0 auto;border:0;background:none;color:var(--muted);font-weight:700;font-size:13px;padding:9px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.tb.on{background:var(--accent);color:#fff}
+.sheet.tabbed .sec{border-top:0;margin-top:10px;padding-top:6px}
+.sheet.tabbed .sec h3{color:var(--muted)}
+@media (min-width:1000px){ .sheet{max-width:760px} .sheet-bg[data-kind="iptv"] .sheet,.sheet-bg[data-kind="finance"] .sheet,.sheet-bg[data-kind="report"] .sheet,.sheet-bg[data-kind="errors"] .sheet,.sheet-bg[data-kind="activity"] .sheet{max-width:980px!important} }
+/* IPTV: fewer numbers on top, filters folded */
+.ifold{margin-top:10px}
+.ifold summary{cursor:pointer;color:#c3cae6;font-size:13px;font-weight:700;padding:8px 2px;list-style:none}
+.ifold summary::-webkit-details-marker{display:none}
+.ifold summary::before{content:"▸ ";color:var(--muted)}
+.ifold[open] summary::before{content:"▾ "}
+.sumline{font-size:13px;color:#c3cae6;line-height:1.6}
+@media (max-width:999px){
+  .fcards{display:flex;overflow-x:auto;scrollbar-width:none;margin:0 -16px 10px;padding:0 16px}
+  .fcards::-webkit-scrollbar{display:none}
+  .chip.fc{flex:0 0 auto;min-width:92px;padding:8px 12px}
+  .chip.fc b{font-size:18px}
+  .sheet-bg[data-kind="iptv"] .mgrid{grid-template-columns:repeat(4,1fr)}
+  .sheet-bg[data-kind="iptv"] .mgrid div{padding:10px 8px}
+  .sheet-bg[data-kind="iptv"] .mgrid span{font-size:10px}
+}
+.sumline b{color:#fff}
 </style>
 </head>
 <body>
@@ -147,13 +264,22 @@ var LS = {
 var app = document.getElementById('app');
 var sb = null, devices = [], filter = 'all', query = '', current = null;
 
-var ST = { active:['Aktiv','ok'], pending:['Yeni','wait'], expired:['Bitib','warn'], blocked:['Bloklu','bad'] };
+var ST = { active:['Aktiv','ok'], pending:['Yeni','wait'], expired:['Bitib','warn'], blocked:['Bloklu','bad'], archived:['Arxiv','arch'] };
 var AYLAR = ['yanvar','fevral','mart','aprel','may','iyun','iyul','avqust','sentyabr','oktyabr','noyabr','dekabr'];
 var ICON = {
   refresh:'<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>',
   out:'<svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
   close:'<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>',
-  search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>'
+  search:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  users:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg>',
+  tv:'<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="m8 3 4 4 4-4"/></svg>',
+  wallet:'<svg viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><circle cx="16" cy="14" r="1.5"/></svg>',
+  chart:'<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>',
+  alert:'<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg>',
+  upload:'<svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></svg>',
+  menu:'<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  history:'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg>',
+  gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
@@ -162,6 +288,8 @@ function errText(e){
   var m=(e && (e.message || e.error_description || e.hint)) || 'Xəta baş verdi';
   if(/app_release_min_le_version/.test(m)) return 'Bu versiya məcburi minimum versiyadan köhnədir. Əvvəl məcburi yeniləməni söndürün.';
   if(/Could not find the function|does not exist/.test(m) && /cleanup_pending|report_errors|audit_log|app_settings|client_errors/.test(m)) return 'Supabase-də v2.7.0 miqrasiyası işlədilməyib.';
+  if(/Could not find the function|does not exist/.test(m) && /record_payment|archive_customer|restore_customer|delete_customer|set_customer_fee/.test(m)) return 'Supabase-də v2.9.0 miqrasiyası işlədilməyib.';
+  if(/payments_device_id_fkey/.test(m)) return 'Bu müştərinin ödəniş tarixçəsi var — silmək olmaz. Arxivləyin.';
   if(/Could not find the function|does not exist/.test(m) && /provider_|assign_slot|release_slot|iptv_|finance_|add_payment_ex|device_iptv|set_resale|replace_device|transfer_assignment|suspend_slot|reset_device_enrollment|confirm_revoke|set_device_installed/.test(m)) return 'Supabase-də v2.8.0 miqrasiyası işlədilməyib.';
   if(/provider_assignments_device_id_fkey/.test(m)) return 'Bu müştərinin IPTV təyinat tarixçəsi var — silmək olmaz. Bloklayın.';
   var vx=m.match(/VX:([a-z_]+)/); if(vx) return VXMSG[vx[1]] || ('Xəta: '+vx[1]);
@@ -181,7 +309,12 @@ var VXMSG={
   bad_m3u_url:'M3U link http:// və ya https:// ilə başlamalıdır.', bad_server:'Server ünvanı səhvdir (məs. http://server.com:8080).', bad_username:'Login səhvdir.', bad_password:'Parol boş ola bilməz.', bad_type:'Növ seçin.',
   bad_rate:'Məzənnəni yazın.', bad_amount:'Məbləği yazın.', bad_dates:'Tarixləri yoxlayın.', reason_required:'Səbəb yazın.', bad_category:'Kateqoriya səhvdir.', bad_method:'Ödəniş üsulu səhvdir.',
   confirm_required:'Təsdiq sözü düzgün yazılmadı — heç nə dəyişmədi.', approval_ref_required:'Provayderin icazə sənədini yazın.', resale_via_rpc_only:'Bu ayar yalnız "2 müştəri rejimi" bölməsindən dəyişir.',
-  payment_immutable:'Ödəniş məbləği dəyişdirilə bilməz.', account_has_customers:'Hesabda müştəri var — əvvəl yerləri boşaldın.'
+  payment_immutable:'Ödəniş məbləği dəyişdirilə bilməz.', account_has_customers:'Hesabda müştəri var — əvvəl yerləri boşaldın.',
+  customer_archived:'Müştəri arxivdədir — əvvəl "Arxivdən çıxar" edin.', already_archived:'Müştəri artıq arxivdədir.', not_archived:'Müştəri arxivdə deyil.',
+  archive_via_rpc_only:'Arxiv vəziyyəti yalnız "Arxivlə / Arxivdən çıxar" düymələri ilə dəyişir.', has_history:'Bu müştərinin ödəniş və ya IPTV tarixçəsi var — silinmir. Onun əvəzinə arxivləyin (tarixçə qorunur).',
+  fee_required:'Aylıq tarif təyin edilməyib — məbləği yazın və səbəbini göstərin, ya da "Müştəri" bölməsində tarif təyin edin.', amount_required:'Məbləği yazın.',
+  override_reason_required:'Məbləğ tarifdən fərqlidir — səbəbini yazın (məs. endirim).', stale_customer:'Bu müştəriyə bu arada başqa admin ödəniş əlavə edib və ya bitmə tarixi dəyişib. Məlumat yeniləndi — yoxlayıb yenidən cəhd edin.',
+  bad_fee:'Tarif 0-dan böyük və 1000-dən kiçik olmalıdır (və ya boş — standart tarif).', bad_months:'Ay sayı səhvdir.', already_voided:'Bu ödəniş artıq geri alınıb.'
 };
 
 /* ---- Bakı vaxtı (UTC+4, yay vaxtı yoxdur) ---- */
@@ -219,8 +352,8 @@ function ago(iso){
   return Math.round(h/24)+' gün əvvəl';
 }
 
-function statusOf(d){ if(d.blocked) return 'blocked'; if(!d.expires_at) return 'pending'; return Date.parse(d.expires_at) <= Date.now() ? 'expired' : 'active'; }
-function isDue(d){ return !!d.expires_at && Date.parse(d.expires_at) <= upcomingBoundary(); }
+function statusOf(d){ if(d.archived_at) return 'archived'; if(d.blocked) return 'blocked'; if(!d.expires_at) return 'pending'; return Date.parse(d.expires_at) <= Date.now() ? 'expired' : 'active'; }
+function isDue(d){ return !d.archived_at && !!d.expires_at && Date.parse(d.expires_at) <= upcomingBoundary(); }
 function label(d){ return '#'+(d.customer_no||'—') + (d.customer_name ? ' · '+d.customer_name : ''); }
 
 function toast(msg, opts){
@@ -285,21 +418,37 @@ function renderLogin(err){
 
 /* ================= əsas ekran ================= */
 function renderMain(){
+  /* v2.8.1: one clear menu (left on a computer, a strip on the phone) instead of 7 equal buttons */
+  function nv(id,ic,t,on,cls){ return '<button class="nv'+(on?' on':'')+(cls?' '+cls:'')+'" id="'+id+'">'+ICON[ic]+'<span>'+t+'</span></button>'; }
   app.innerHTML =
-    '<header><div class="in"><div class="t"><b>VEXO</b><small id="cyc"></small></div>'+
+    '<div class="shell">'+
+    '<aside class="side"><div class="side-brand"><b>VEXO</b><small>İdarəetmə paneli</small></div>'+
+      '<nav class="nav">'+
+        nv('nvc','users','Müştərilər',true)+nv('iptvb','tv','IPTV')+nv('finb','wallet','Maliyyə')+nv('rep','chart','Aylıq hesabat',false,'more-only')+
+        '<div class="nvsep">Sistem</div>'+
+        nv('upd','upload','Tətbiq yeniləməsi',false,'more-only')+nv('cfgr','gear','Ayarlar',false,'more-only')+nv('act','history','Fəaliyyət tarixçəsi',false,'more-only')+nv('errs','alert','Sistem xətaları',false,'more-only')+
+        nv('more','menu','Daha çox')+
+      '</nav></aside>'+
+    '<div class="mainc">'+
+    '<header><div class="in"><div class="t"><b>Müştərilər</b><small id="cyc"></small></div>'+
       '<button class="icon-btn" id="rf" title="Yenilə">'+ICON.refresh+'</button>'+
       '<button class="icon-btn" id="lo" title="Çıxış">'+ICON.out+'</button></div></header>'+
     '<div class="wrap">'+
-      '<div id="banner"></div>'+
-      '<div class="stats" id="stats"></div>'+
-      '<div class="tools"><button class="btn" id="rep">📊 Aylıq hesabat</button><button class="btn" id="upd">⬆ Tətbiq yeniləməsi</button>'+
-        '<button class="btn" id="act">🕘 Fəaliyyət tarixçəsi</button><button class="btn" id="errs">⚠ Sistem xətaları</button>'+
-        '<button class="btn" id="iptvb">📡 IPTV hesabları</button><button class="btn" id="finb">💰 Maliyyə</button>'+
-        '<button class="btn" id="cfgr">⚙ Qeydiyyat və ayarlar</button></div>'+
-      '<div class="search">'+ICON.search+'<input id="q" placeholder="ID, ad, telefon və ya MAC" autocomplete="off"></div>'+
-      '<div class="chips" id="chips"></div>'+
+      '<div id="banner" hidden></div>'+
+      '<div class="stats" id="stats" hidden></div>'+
+      '<div class="chips fcards" id="chips"></div>'+
+      '<div class="search">'+ICON.search+'<input id="q" placeholder="Axtar: ad, telefon, № və ya MAC" autocomplete="off"></div>'+
       '<div class="list" id="list"><div class="empty">Yüklənir…</div></div>'+
-    '</div>';
+    '</div></div></div>';
+  document.getElementById('nvc').onclick=function(){ closeSheet(); current=null; window.scrollTo(0,0); };
+  document.getElementById('more').onclick=function(){
+    var bg=sheet('more');
+    var items=[['rep','chart','Aylıq hesabat — kim ödəyib, kim yox'],['upd','upload','Tətbiq yeniləməsi (APK)'],['cfgr','gear','Ayarlar — qeydiyyat, təmizləmə, IPTV rejimi'],['act','history','Fəaliyyət tarixçəsi'],['errs','alert','Sistem xətaları'],['lo','out','Çıxış']];
+    bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Daha çox</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div><div class="morelist">'+
+      items.map(function(i){ return '<button class="btn" data-go="'+i[0]+'">'+ICON[i[1]]+'<span>'+i[2]+'</span></button>'; }).join('')+'</div></div>';
+    bg.querySelector('#x').onclick=closeSheet;
+    bg.querySelectorAll('[data-go]').forEach(function(b){ b.onclick=function(){ var id=b.getAttribute('data-go'); closeSheet(); document.getElementById(id).click(); }; });
+  };
   document.getElementById('rf').onclick=load;
   document.getElementById('rep').onclick=openReport;
   document.getElementById('upd').onclick=openRelease;
@@ -324,12 +473,15 @@ async function load(){
 }
 
 function counts(){
-  var c={ all:devices.length, active:0, pending:0, expired:0, blocked:0, due:0, noiptv:0 };
-  devices.forEach(function(d){ c[statusOf(d)]++; if(isDue(d)) c.due++; if(iptv && statusOf(d)==='active' && !d.replaced_by && !iptvByDev[d.id]) c.noiptv++; });
+  var c={ all:0, active:0, pending:0, expired:0, blocked:0, due:0, noiptv:0, archived:0 };
+  devices.forEach(function(d){ var s=statusOf(d); c[s]++; if(s==='archived') return; c.all++; if(isDue(d)) c.due++; if(iptv && s==='active' && !d.replaced_by && !iptvByDev[d.id]) c.noiptv++; });
   return c;
 }
 function matches(d){
-  if(filter==='due'){ if(!isDue(d)) return false; }
+  var arch=statusOf(d)==='archived';   /* v2.9: arxivdəkilər yalnız "Arxiv" filtrində görünür */
+  if(filter==='archived'){ if(!arch) return false; }
+  else if(arch) return false;
+  else if(filter==='due'){ if(!isDue(d)) return false; }
   else if(filter==='noiptv'){ if(!(statusOf(d)==='active' && !d.replaced_by && !iptvByDev[d.id])) return false; }
   else if(filter!=='all' && statusOf(d)!==filter) return false;
   if(!query) return true;
@@ -342,15 +494,18 @@ function renderList(){
   var c=counts(), ub=upcomingBoundary();
   document.getElementById('cyc').textContent = 'Növbəti ödəniş günü: '+lastDay(ub);
   document.getElementById('banner').innerHTML = c.due
-    ? '<button class="due-banner" id="dueb"><b>'+c.due+'</b><div><strong>Ödəniş gözlənilir</strong><br>'+lastDay(ub)+' gün sonuna qədər uzadılmayanlar avtomatik bloklanacaq. Siyahını açmaq üçün toxun.</div></button>'
+    ? '<button class="due-banner" id="dueb"><b>'+c.due+'</b><div><strong>müştəridən ödəniş gözlənilir</strong><br>'+lastDay(ub)+' gün sonuna qədər uzadılmayanlar avtomatik bloklanacaq.</div><span class="go">Göstər ›</span></button>'
     : '';
   var dueb=document.getElementById('dueb'); if(dueb) dueb.onclick=function(){ filter='due'; renderList(); window.scrollTo(0,0); };
   document.getElementById('stats').innerHTML =
     stat(c.active,'Aktiv')+stat(c.pending,'Yeni')+stat(c.expired,'Bitib')+stat(c.blocked,'Bloklu');
-  var chips=[['all','Hamısı'],['due','Ödəniş gözlənilir'],['active','Aktiv'],['pending','Yeni'],['expired','Bitib'],['blocked','Bloklu']];
-  if(iptv) chips.push(['noiptv','IPTV yeri yoxdur']);
+  var chips=[['all','Hamısı',''],['due','Ödəniş gözlənilir','wait'],['active','Aktiv','ok'],['pending','Yeni','new'],['expired','Bitib','warn'],['blocked','Bloklu','bad']];
+  if(iptv) chips.push(['noiptv','IPTV-siz','']);
+  if(c.archived || filter==='archived') chips.push(['archived','Arxiv','arch']);
+  /* the counters ARE the filters (no duplicate number boxes) */
+  chips=chips.filter(function(x){ return x[0]==='all' || x[0]===filter || c[x[0]]>0; });   /* v2.9.1: 0 olan filtrlər gizlənir */
   document.getElementById('chips').innerHTML = chips.map(function(x){
-    return '<button class="chip'+(filter===x[0]?' on':'')+'" data-f="'+x[0]+'">'+x[1]+'<small>'+c[x[0]]+'</small></button>';
+    return '<button class="chip fc '+x[2]+(filter===x[0]?' on':'')+'" data-f="'+x[0]+'"><b>'+c[x[0]]+'</b><span>'+x[1]+'</span></button>';
   }).join('');
   document.querySelectorAll('.chip').forEach(function(b){ b.onclick=function(){ filter=b.getAttribute('data-f'); renderList(); }; });
 
@@ -358,20 +513,23 @@ function renderList(){
   var list=document.getElementById('list');
   if(!rows.length){
     list.innerHTML='<div class="empty">'+(devices.length
-      ? (filter==='due' ? 'Bu dövr üçün ödəniş gözlənilən müştəri qalmayıb. ✓' : 'Uyğun müştəri tapılmadı.')
+      ? (filter==='due' ? 'Bu dövr üçün ödəniş gözlənilən müştəri qalmayıb. ✓' : filter==='archived' ? 'Arxivdə müştəri yoxdur.' : 'Uyğun müştəri tapılmadı.')
       : 'Hələ cihaz yoxdur.<br>Tətbiq TV-də ilk dəfə açılanda burada "Yeni" kimi görünəcək.')+'</div>';
     return;
   }
   list.innerHTML = rows.map(function(d){
     var s=statusOf(d), st=ST[s];
-    var until = d.expires_at ? (s==='active' ? lastDayShort(Date.parse(d.expires_at))+' qədər' : 'bitdi: '+lastDayShort(Date.parse(d.expires_at))) : 'aktivləşdirilməyib';
-    var showPay = s==='pending' || isDue(d) || s==='expired' || s==='blocked';
-    var btn = showPay ? '<button class="btn '+(s==='pending'?'primary':'green')+' pay-btn" data-pay="'+d.id+'">'+(s==='pending'?'Aktivləşdir':'Ödənib')+'</button>' : '';
-    return '<div class="row">'+
+    var until = s==='archived' ? 'arxivdə: '+lastDayShort(Date.parse(d.archived_at)+1) : d.expires_at ? (s==='active' ? lastDayShort(Date.parse(d.expires_at))+' qədər' : 'bitdi: '+lastDayShort(Date.parse(d.expires_at))) : 'aktivləşdirilməyib';
+    var showPay = s!=='archived' && (s==='pending' || isDue(d) || s==='expired' || s==='blocked');
+    var btn = showPay ? '<button class="btn '+(s==='pending'?'primary':'green')+' pay-btn" data-pay="'+d.id+'">'+(s==='pending'?'Aktivləşdir':'Ödənib')+'</button>' : '<span class="pay-spacer"></span>';
+    var ip=iptvByDev[d.id];
+    return '<div class="row'+(d.customer_name?' named':'')+'">'+
       '<div class="main" data-open="'+d.id+'">'+
-        '<div class="l1"><span class="no">#'+esc(d.customer_no)+'</span><span class="nm">'+esc(d.customer_name||'Ad yazılmayıb')+'</span><span class="pill '+st[1]+'">'+st[0]+'</span></div>'+
-        '<div class="l2">'+esc(until)+' · <span class="mono">'+esc(d.mac)+'</span>'+(d.phone?' · '+esc(d.phone):'')+
-          (iptvByDev[d.id]?' · 📡 '+esc(iptvByDev[d.id].acc.label||iptvByDev[d.id].acc.subuser)+'/'+iptvByDev[d.id].slot.slot:'')+'</div>'+
+        '<div class="l1"><span class="no">#'+esc(d.customer_no)+'</span><span class="nm'+(d.customer_name?'':' noname')+'">'+esc(d.customer_name||'Adsız')+'</span><span class="pill '+st[1]+'">'+st[0]+'</span></div>'+
+        '<div class="l2"><span class="c-until">'+esc(until)+'</span>'+
+          '<span class="c-ph">'+(d.phone?esc(d.phone):'')+'</span>'+
+          '<span class="c-ip">'+(ip?'📡 '+esc(ip.acc.label||ip.acc.subuser)+'/'+ip.slot.slot:'')+'</span>'+
+          '<span class="c-mac mono">'+esc(d.mac)+'</span></div>'+
       '</div>'+btn+'</div>';
   }).join('');
   list.querySelectorAll('[data-open]').forEach(function(el){ el.onclick=function(){ openDevice(el.getAttribute('data-open')); }; });
@@ -380,50 +538,159 @@ function renderList(){
 function stat(n,l){ return '<div class="stat"><b>'+n+'</b><span>'+l+'</span></div>'; }
 
 /* ================= pəncərələr ================= */
+/* v2.8.1: long windows are split into tabs (same content, same buttons — just grouped).
+   The groups are found by the section titles, so every window keeps its own logic. */
+var TABS={
+  device:[['Ödəniş',/Ödəniş alındı|^Aktivləşdir/],['Müştəri',/^Müştəri$|Müştəriyə mesaj/],['IPTV',/IPTV xidməti/],['Cihaz',/Cihaz məlumatı|Quraşdırma və cihaz|Quraşdırıcı kodu/],['Tarixçə',/tarixçəsi/],['Əlavə',/^Əlavə$/]],
+  account:[['Yerlər',/^Yerlər/],['Playlist',/Playlist məlumatı/],['Paketlər',/Paketlər/],['Tarixçə',/^Tarixçə/],['Əlavə',/^Əlavə$/]],
+  finance:[['Xülasə',/Aylar üzrə/],['Qeydlər',/Yeni gəlir|Bu dövrün qeydləri/],['Partnyorlar',/Partnyorlar/],['Ayarlar',/^Ayarlar$/]],
+  settings:[['Qeydiyyat',/Yeni cihaz qeydiyyatı|Limitlər/],['Təmizləmə',/Köhnə gözləyən/],['IPTV rejimi',/2 müştəri/]]
+};
+var tabSel={}, tabBusy=false;
+function tabify(bg){
+  var kind=bg.getAttribute('data-kind'), conf=TABS[kind]; if(!conf) return;
+  var sh=bg.querySelector('.sheet'); if(!sh || sh.querySelector('.tabbar')) return;
+  var secs=[].filter.call(sh.querySelectorAll('.sec'), function(x){ return !x.parentElement.closest('.sec'); });
+  if(secs.length<3) return;
+  var groups=conf.map(function(){ return []; });
+  secs.forEach(function(sec){
+    var h=sec.querySelector('h3'), t=h?h.textContent.trim():'', gi=0;
+    conf.forEach(function(c,i){ if(c[1].test(t)) gi=i; });
+    if(h && !conf.some(function(c){ return c[1].test(t); })) gi=0;
+    groups[gi].push(sec); sec.setAttribute('data-tab',gi);
+  });
+  var used=conf.map(function(c,i){ return groups[i].length?i:-1; }).filter(function(i){ return i>=0; });
+  if(used.length<2) return;
+  var sel=tabSel[kind]; if(used.indexOf(sel)<0) sel=used[0];
+  tabBusy=true;
+  var bar=document.createElement('div'); bar.className='tabbar';
+  bar.innerHTML=used.map(function(i){ return '<button class="tb'+(i===sel?' on':'')+'" data-tabbtn="'+i+'">'+conf[i][0]+'</button>'; }).join('');
+  secs[0].parentNode.insertBefore(bar, secs[0]);
+  sh.classList.add('tabbed');
+  function show(i){
+    tabSel[kind]=i;
+    secs.forEach(function(x){ x.hidden = +x.getAttribute('data-tab')!==i; });
+    bar.querySelectorAll('.tb').forEach(function(b){ b.classList.toggle('on', +b.getAttribute('data-tabbtn')===i); });
+  }
+  bar.onclick=function(e){ var b=e.target.closest('[data-tabbtn]'); if(b) show(+b.getAttribute('data-tabbtn')); };
+  show(sel);
+  tabBusy=false;
+}
+/* open a tab by its name (also used by the tests) */
+window.adminTab=function(name){
+  var bar=document.querySelector('.sheet-bg .tabbar'); if(!bar) return false;
+  var b=[].find.call(bar.querySelectorAll('.tb'), function(x){ return x.textContent===name; }); if(b) b.click(); return !!b;
+};
+new MutationObserver(function(){
+  if(tabBusy) return;
+  document.querySelectorAll('.sheet-bg').forEach(tabify);
+}).observe(document.documentElement, { childList:true, subtree:true });
+
 function sheet(kind){
   closeSheet();
+  tabSel[kind]=undefined;   /* a newly opened window starts on its first tab */
+  setTimeout(function(){ navMark(kind); },0);
   var bg=document.createElement('div'); bg.className='sheet-bg'; bg.setAttribute('data-kind',kind);
   bg.onclick=function(e){ if(e.target===bg) closeSheet(); };
   document.body.appendChild(bg);
   document.addEventListener('keydown', escClose);
   return bg;
 }
+/* menu highlight follows the open window */
+var NAVK={iptv:'iptvb',account:'iptvb',finance:'finb',report:'rep',errors:'errs',release:'upd',activity:'act',settings:'cfgr'};
+function navMark(kind){ document.querySelectorAll('.nv').forEach(function(b){ b.classList.toggle('on', b.id===(NAVK[kind]||'nvc')); }); }
 function closeSheet(){
   var bg=document.querySelector('.sheet-bg'); if(bg) bg.remove();
+  navMark('');
   document.removeEventListener('keydown', escClose);
 }
 function escClose(e){ if(e.key==='Escape'){ current=null; closeSheet(); } }
 
 /* ---- Ödəniş pəncərəsi (bir toxunuşla) ---- */
 var MONTHS=[1,2,3,6,12];
+/* v2.9: tarif serverdə saxlanılır (müştərinin tarifi, yoxdursa standart tarif) */
+function isV29(d){ return !!d && ('archived_at' in d); }
+function stdFee(){ return settingsCache && settingsCache.monthly_fee_azn!=null ? Number(settingsCache.monthly_fee_azn) : null; }
+function feeOf(d){ return d.monthly_fee_azn!=null ? Number(d.monthly_fee_azn) : stdFee(); }
+function newReqId(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  var b=new Uint8Array(16); crypto.getRandomValues(b); b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128;
+  var h=[].map.call(b,function(x){ return (x<16?'0':'')+x.toString(16); }).join('');
+  return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);
+}
 function payBlockHtml(d){
-  return '<div class="months">'+MONTHS.map(function(n,i){ return '<button class="btn'+(i===0?' sel':'')+'" data-m="'+n+'">'+n+' ay</button>'; }).join('')+'</div>'+
+  var v29=isV29(d);
+  return (v29?'<div class="hint" id="pfee" style="margin-top:0"></div>':'')+
+    '<div class="months">'+MONTHS.map(function(n,i){ return '<button class="btn'+(i===0?' sel':'')+'" data-m="'+n+'">'+n+' ay</button>'; }).join('')+'</div>'+
     '<div class="preview" id="pv"></div>'+
-    '<div class="grid2"><div><label>Məbləğ (AZN)</label><input id="amt" type="number" inputmode="decimal" min="0" step="0.01" value="'+esc(LS.get('mrb_last_amount')||'')+'"></div>'+
-    '<div><label>Qeyd</label><input id="pnote" placeholder="nağd, kart…"></div>'+
+    '<div class="grid2"><div><label>Məbləğ (AZN)</label><input id="amt" type="number" inputmode="decimal" min="0" step="0.01" value="'+(v29?'':esc(LS.get('mrb_last_amount')||''))+'"></div>'+
+    '<div><label>Kim aldı</label><input id="prcv" list="partners" value="'+esc(LS.get('mrb_last_rcv')||'')+'"></div></div>'+
+    '<details class="fold"><summary>Ödəniş üsulu və qeyd</summary><div class="grid2">'+
     '<div><label>Üsul</label><select id="pmeth"><option value="">—</option><option value="cash">Nağd</option><option value="card">Kart</option><option value="transfer">Köçürmə</option><option value="other">Digər</option></select></div>'+
-    '<div><label>Kim aldı</label><input id="prcv" list="partners" value="'+esc(LS.get('mrb_last_rcv')||'')+'"></div></div>'+partnerOptions();
+    '<div><label>Qeyd</label><input id="pnote" placeholder="istəyə bağlı"></div></div></details>'+
+    (v29?'<div id="ovr" hidden><div class="warnbox"><b>Məbləğ tarifdən fərqlidir.</b> Endirim və ya fərqli məbləğ üçün səbəb yazın — təsdiqdən sonra qeyd olunacaq.</div>'+
+      '<label>Fərqli məbləğin səbəbi</label><input id="preason" maxlength="300" placeholder="məs. 3 aylıq ödənişə endirim"></div>':'')+
+    partnerOptions();
 }
 function wirePayBlock(root, d, onDone){
-  var months=1;
+  var months=1, v29=isV29(d), fee=v29?feeOf(d):null, amtEl=root.querySelector('#amt'), rid=v29?newReqId():null;
+  function expected(){ return fee==null ? null : Math.round(fee*100)*months/100; }
+  function differs(){
+    var raw=amtEl.value.trim(), e=expected();
+    if(raw==='') return false;
+    return e==null || Math.round(Number(raw)*100)!==Math.round(e*100);
+  }
   function upd(){
-    var ms=nextExpiry(d.expires_at, months);
-    root.querySelector('#pv').innerHTML='Yeni bitmə: <b>'+lastDay(ms)+'</b> gün sonuna qədər';
+    var ms=nextExpiry(d.expires_at, months), e=expected();
+    root.querySelector('#pv').innerHTML='Yeni bitmə: <b>'+lastDay(ms)+'</b>'+
+      (v29 && e!=null ? ' · '+months+' × '+fee.toFixed(2)+' = <b>'+e.toFixed(2)+' ₼</b>' : '');
+    if(v29) root.querySelector('#ovr').hidden=!differs();
+  }
+  function setAuto(){ var e=expected(); amtEl.value = e==null ? '' : e.toFixed(2); }
+  if(v29){
+    root.querySelector('#pfee').innerHTML = fee!=null
+      ? 'Tarif: <b>'+fee.toFixed(2)+' ₼ / ay</b> ('+(d.monthly_fee_azn!=null?'bu müştərinin tarifi':'standart tarif')+')'
+      : '<b style="color:var(--warn)">Aylıq tarif təyin edilməyib.</b> Məbləği yazın və səbəbini göstərin, ya da "Müştəri" bölməsində tarif təyin edin.';
+    setAuto();
+    amtEl.oninput=upd;
   }
   root.querySelectorAll('[data-m]').forEach(function(b){
-    b.onclick=function(){ months=+b.getAttribute('data-m'); root.querySelectorAll('[data-m]').forEach(function(x){ x.classList.toggle('sel',x===b); }); upd(); };
+    b.onclick=function(){ months=+b.getAttribute('data-m'); root.querySelectorAll('[data-m]').forEach(function(x){ x.classList.toggle('sel',x===b); }); if(v29) setAuto(); upd(); };
   });
   upd();
   return async function(){
-    var amtRaw=root.querySelector('#amt').value.trim();
-    if(amtRaw!=='') LS.set('mrb_last_amount', amtRaw);
+    var amtRaw=amtEl.value.trim();
     var meth=root.querySelector('#pmeth').value||null, rcv=root.querySelector('#prcv').value.trim()||null;
-    if(rcv) LS.set('mrb_last_rcv', rcv);
-    var args={ p_device_id:d.id, p_months:months, p_days:0, p_amount: amtRaw===''?null:Number(amtRaw), p_note: root.querySelector('#pnote').value.trim()||null };
-    var r=await sb.rpc('add_payment_ex', Object.assign({ p_method:meth, p_received_by:rcv }, args));
-    if(r.error && v28missing(r.error)) r=await sb.rpc('add_payment', args);   /* v2.8 miqrasiyası hələ yoxdursa */
-    if(r.error) throw r.error;
-    var saved=r.data;
+    var note=root.querySelector('#pnote').value.trim()||null;
+    var r, saved;
+    if(v29){
+      if(amtRaw===''){ toast('Məbləği yazın — boş məbləğlə ödəniş qeyd olunmur',{bad:true}); amtEl.focus(); return 'skip'; }
+      var amt=Math.round(Number(amtRaw)*100)/100;
+      if(!isFinite(amt) || amt<0){ toast('Məbləğ səhvdir',{bad:true}); amtEl.focus(); return 'skip'; }
+      var reason=null, e=expected();
+      if(differs()){
+        reason=root.querySelector('#preason').value.trim();
+        if(reason.length<3){ toast('Fərqli məbləğ üçün səbəb yazın',{bad:true}); root.querySelector('#preason').focus(); return 'skip'; }
+        if(!confirm('Məbləğ tarifdən fərqlidir.\n\nTarifə görə: '+(e==null?'— (tarif yoxdur)':e.toFixed(2)+' ₼')+'\nDaxil edilən: '+amt.toFixed(2)+' ₼\nSəbəb: '+reason+'\n\nBu məbləğlə qeyd edilsin?')) return 'skip';
+      }
+      if(rcv) LS.set('mrb_last_rcv', rcv);
+      r=await sb.rpc('record_payment',{ p_device_id:d.id, p_months:months, p_amount:amt, p_override_reason:reason,
+        p_method:meth, p_received_by:rcv, p_note:note, p_request_id:rid, p_check_expires:true, p_expect_expires:d.expires_at||null });
+      if(r.error && v28missing(r.error) && /record_payment/.test(r.error.message||'')) throw new Error('Supabase-də v2.9.0 miqrasiyası işlədilməyib.');
+      if(r.error && /VX:stale_customer/.test(r.error.message||'')){ toast(VXMSG.stale_customer,{bad:true}); if(onDone) onDone(); await load(); return 'skip'; }
+      if(r.error) throw r.error;
+      rid=newReqId();
+      saved=r.data.device;
+      if(r.data.duplicate){ toast('Bu ödəniş artıq qeyd olunub (təkrar basılma) — ikinci dəfə yazılmadı'); if(onDone) onDone(); return; }
+    } else {
+      if(amtRaw!=='') LS.set('mrb_last_amount', amtRaw);
+      if(rcv) LS.set('mrb_last_rcv', rcv);
+      var args={ p_device_id:d.id, p_months:months, p_days:0, p_amount: amtRaw===''?null:Number(amtRaw), p_note: note };
+      r=await sb.rpc('add_payment_ex', Object.assign({ p_method:meth, p_received_by:rcv }, args));
+      if(r.error && v28missing(r.error)) r=await sb.rpc('add_payment', args);   /* v2.8 miqrasiyası hələ yoxdursa */
+      if(r.error) throw r.error;
+      saved=r.data;
+    }
     toast(label(d)+' → '+lastDay(Date.parse(saved.expires_at))+' qədər', { action:['Geri al', function(){ undoLast(d.id); }] });
     if(onDone) onDone();
   };
@@ -446,9 +713,10 @@ function openPay(id){
 }
 
 async function undoLast(deviceId){
-  var r=await sb.from('payments').select('id').eq('device_id',deviceId).order('id',{ascending:false}).limit(1);
-  if(r.error || !r.data || !r.data.length){ toast('Geri alınacaq ödəniş yoxdur', {bad:true}); return; }
-  var u=await sb.rpc('undo_payment', { p_payment_id:r.data[0].id });
+  var r=await sb.from('payments').select('*').eq('device_id',deviceId).order('id',{ascending:false}).limit(20);
+  var last=(r.data||[]).find(function(p){ return !p.voided_at; });
+  if(r.error || !last){ toast('Geri alınacaq ödəniş yoxdur', {bad:true}); return; }
+  var u=await sb.rpc('undo_payment', { p_payment_id:last.id });
   if(u.error){ toast(errText(u.error), {bad:true}); return; }
   toast('Ödəniş geri alındı'); load();
 }
@@ -466,7 +734,7 @@ function openDevice(id){
   var d=devices.find(function(x){ return x.id===id; }); if(!d) return;
   current=id;
   var bg=document.querySelector('.sheet-bg[data-kind="device"]') || sheet('device');
-  var s=statusOf(d), st=ST[s];
+  var s=statusOf(d), st=ST[s], arch=s==='archived', v29=isV29(d);
   var exp=d.expires_at ? lastDay(Date.parse(d.expires_at)) + (s==='active'?' gün sonuna qədər':'') : 'Aktivləşdirilməyib';
   var dateVal='';
   if(d.expires_at){ var p=bk(Date.parse(d.expires_at)-1); dateVal=p.y+'-'+pad(p.m+1)+'-'+pad(p.d); }
@@ -474,23 +742,30 @@ function openDevice(id){
   bg.innerHTML='<div class="sheet" role="dialog" aria-modal="true">'+
     '<div class="top"><div class="grow"><span class="pill '+st[1]+'">'+st[0]+'</span><h2>'+esc(label(d))+'</h2></div>'+
       '<button class="icon-btn" id="x">'+ICON.close+'</button></div>'+
-    '<div class="kv">'+
-      '<div><small>Bitmə</small>'+esc(exp)+'</div>'+
+    (arch ? '<div class="archbox"><b>Arxivdədir</b> · '+esc(fmtDT(d.archived_at))+(d.archive_reason?' · '+esc(d.archive_reason):'')+
+      '<br>Ödəniş və fəaliyyət tarixçəsi qorunur. TV-də xidmət dayandırılıb. Bərpa etmək üçün "Əlavə" bölməsində "Arxivdən çıxar".</div>' : '')+
+    '<div class="subline">Bitmə: <b>'+esc(exp)+'</b>'+(d.phone?' · 📞 <b>'+esc(d.phone)+'</b>':'')+' · son əlaqə '+esc(ago(d.last_seen))+'</div>'+
+    '<div class="sec devinfo" hidden><h3>Cihaz məlumatı</h3><div class="kv">'+
       '<div><small>Son əlaqə</small>'+esc(ago(d.last_seen))+'</div>'+
       '<div><small>MAC</small><span class="mono">'+esc(d.mac)+'</span></div>'+
       '<div><small>Cihaz · versiya</small>'+esc([d.platform==='tv'?'TV':d.platform==='phone'?'Telefon':'', d.model, d.app_version].filter(Boolean).join(' · ')||'—')+'</div>'+
       '<div><small>Ödəniş statusu</small>'+esc(payStatusText(d))+'</div>'+
       '<div><small>Quraşdırma</small>'+(d.installed_on?dshort(d.installed_on):'ilk qoşulma: '+fmtDT(d.first_seen).slice(0,10))+'</div>'+
-    '</div>'+
+    '</div></div>'+
 
-    '<div class="sec"><h3>'+(s==='pending'?'Aktivləşdir':'Ödəniş alındı — uzat')+'</h3>'+payBlockHtml(d)+
-      '<button class="btn green block" id="pay">'+(s==='pending'?'Aktivləşdir':'Uzat')+'</button></div>'+
+    (arch
+      ? '<div class="sec"><h3>Ödəniş alındı — uzat</h3><div class="hint" style="margin-top:0">Müştəri arxivdədir — ödəniş qəbul etmək üçün əvvəl "Əlavə" bölməsindən arxivdən çıxarın.</div></div>'
+      : '<div class="sec"><h3>'+(s==='pending'?'Aktivləşdir':'Ödəniş alındı — uzat')+'</h3>'+payBlockHtml(d)+
+        '<button class="btn green block" id="pay">'+(s==='pending'?'Aktivləşdir':'Uzat')+'</button></div>')+
 
     '<div class="sec"><h3>Müştəri</h3>'+
       '<label>Ad</label><input id="nm" value="'+esc(d.customer_name||'')+'">'+
       '<label>Telefon</label><input id="ph" type="tel" value="'+esc(d.phone||'')+'">'+
       '<label>Ünvan / qeyd</label><textarea id="nt">'+esc(d.note||'')+'</textarea>'+
-      '<button class="btn block" id="sv">Yadda saxla</button></div>'+
+      '<button class="btn block" id="sv">Yadda saxla</button>'+
+      (v29 ? '<label>Aylıq tarif (AZN)</label><div class="grid2"><input id="fee" type="number" min="0" step="0.01" inputmode="decimal" placeholder="standart: '+(stdFee()!=null?stdFee().toFixed(2):'təyin edilməyib')+'" value="'+(d.monthly_fee_azn!=null?Number(d.monthly_fee_azn).toFixed(2):'')+'"><button class="btn" id="fsv">Tarifi saxla</button></div>'+
+        '<div class="hint">Boş saxlasanız standart tarif ('+(stdFee()!=null?stdFee().toFixed(2)+' ₼':'Maliyyə → Ayarlar')+') istifadə olunur. Tarif dəyişəndə əvvəlki ödənişlər dəyişmir.</div>' : '')+
+      '</div>'+
 
     ('installed_on' in d ? deviceV28Html(d) : '')+
     '<div class="sec"><h3>Müştəriyə mesaj (TV-də göstərilir)</h3>'+
@@ -507,31 +782,59 @@ function openDevice(id){
     '<div class="sec"><h3>Fəaliyyət tarixçəsi</h3><div id="dlog" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
 
     '<div class="sec"><h3>Əlavə</h3>'+
-      (d.blocked
+      (arch
+        ? '<div class="hint" style="margin-top:0">Arxivdən çıxaranda müştərinin əvvəlki vəziyyəti (bitmə tarixi, blok) bərpa olunur. IPTV yeri avtomatik qaytarılmır — lazım olsa "IPTV" bölməsindən yenidən təyin edin.</div>'+
+          '<button class="btn okb block" id="rst">Arxivdən çıxar</button>'+
+          '<div class="rowbtns"><button class="btn" id="rk">Açarı sıfırla</button><button class="btn" id="pr">Uşaq kilidi PIN-i sıfırla</button></div>'+
+          '<div class="rowbtns"><button class="btn danger" id="del">Tamamilə sil</button></div>'+
+          '<div class="hint">Tamamilə sil — yalnız heç bir ödənişi və IPTV tarixçəsi olmayan qeyd üçün mümkündür.</div>'+
+        '</div>'+
+      '</div>' : '')+
+      (arch ? '' : (d.blocked
         ? '<div class="hint" style="margin-top:0">Əl ilə bloklanıb'+(d.block_reason?': '+esc(d.block_reason):'')+'</div><button class="btn okb block" id="ub">Bloku aç</button>'
         : '<label>Dərhal blokla (səbəb ekranda görünür)</label><input id="br" placeholder="məs. Ödəniş gecikir"><button class="btn danger block" id="bl">İndi blokla</button>')+
       '<label>Son günü əl ilə təyin et</label><div class="grid2"><input id="dt" type="date" value="'+dateVal+'"><button class="btn" id="sd">Təyin et</button></div>'+
       '<div class="rowbtns"><button class="btn" id="tr">+3 gün sınaq</button><button class="btn" id="rk">Açarı sıfırla</button></div>'+
       '<div class="rowbtns"><button class="btn" id="pr">Uşaq kilidi PIN-i sıfırla</button></div>'+
-      '<div class="rowbtns"><button class="btn danger" id="del">Müştərini sil</button></div>'+
-      '<div class="hint">Açarı sıfırla — müştəri ekranda "Cihaz açarı uyğun gəlmir" görürsə.</div>'+
-      '<div class="hint">PIN-i sıfırla — müştəri uşaq kilidinin PIN-ini unudubsa. 5 dəqiqə ərzində (və ya proqram yenidən açılanda) PIN 0000 olur.'+(d.pin_reset_at?' Son sıfırlama: '+fmtDT(d.pin_reset_at):'')+'</div>'+
+      (v29 ? '<div class="rowbtns"><button class="btn danger" id="arc">Müştərini arxivlə</button><button class="btn" id="del">Tamamilə sil</button></div>'+
+        '<div class="hint">Arxivlə — xidmət dayanır, ödənişlər və tarixçə qalır, istənilən vaxt geri qaytarılır.</div>'
+        : '<div class="rowbtns"><button class="btn danger" id="del">Müştərini sil</button></div>')+
+      '<div class="hint">Açarı sıfırla — ekranda "Cihaz açarı uyğun gəlmir" çıxanda. PIN-i sıfırla — uşaq kilidi PIN-i 0000 olur.'+(d.pin_reset_at?' Son: '+fmtDT(d.pin_reset_at):'')+'</div>'+
     '</div>'+
-  '</div>';
+  '</div>');
 
   var $=function(sel){ return bg.querySelector(sel); };
   function val(sel){ var v=$(sel).value.trim(); return v===''?null:v; }
   $('#x').onclick=function(){ current=null; closeSheet(); };
-  $('#pay').onclick=guard(wirePayBlock(bg, d));
+  if($('#pay')) $('#pay').onclick=guard(wirePayBlock(bg, d));
+  if($('#fsv')) $('#fsv').onclick=guard(async function(){
+    var v=$('#fee').value.trim(), f=v===''?null:Math.round(Number(v)*100)/100;
+    if(f!==null && !(f>0 && f<1000)){ toast(VXMSG.bad_fee,{bad:true}); return 'skip'; }
+    var r=await sb.rpc('set_customer_fee',{ p_device_id:d.id, p_fee:f }); if(r.error) throw r.error;
+    toast(f===null?'Standart tarif istifadə olunacaq':'Tarif: '+f.toFixed(2)+' ₼ / ay');
+  });
+  if($('#arc')) $('#arc').onclick=guard(async function(){
+    var why=prompt(label(d)+' arxivlənsin?\n\n• Ödəniş və fəaliyyət tarixçəsi silinmir, keçmiş hesabatlar dəyişmir\n• Müştəri aktiv siyahıdan gizlənir ("Arxiv" filtrində görünür)\n• TV-də xidmət dayanır ("Abunəlik dayandırılıb")\n'+
+      (iptvByDev[d.id]?'• IPTV yeri boşaldılır — TV playlisti silməni təsdiqləyənə qədər yer başqasına verilmir\n':'')+'\nSəbəbi yazın (məs. "Xidmətdən imtina etdi"):','');
+    if(why===null) return 'skip'; why=why.trim(); if(why.length<3){ toast('Səbəb yazın (ən azı 3 hərf)',{bad:true}); return 'skip'; }
+    var r=await sb.rpc('archive_customer',{ p_device_id:d.id, p_reason:why }); if(r.error) throw r.error;
+    current=null; closeSheet();
+    toast(label(d)+' arxivləndi', { action:['Geri qaytar', async function(){ var q=await sb.rpc('restore_customer',{ p_device_id:d.id }); if(q.error) toast(errText(q.error),{bad:true}); else { toast('Arxivdən çıxarıldı'); load(); } }] });
+  });
+  if($('#rst')) $('#rst').onclick=guard(async function(){
+    if(!confirm(label(d)+' arxivdən çıxarılsın?\n\nƏvvəlki vəziyyəti bərpa olunur (bitmə tarixi dəyişmir). IPTV yeri avtomatik qaytarılmır.')) return 'skip';
+    var r=await sb.rpc('restore_customer',{ p_device_id:d.id }); if(r.error) throw r.error;
+    toast('Arxivdən çıxarıldı');
+  });
   $('#sv').onclick=guard(async function(){ await upd(d.id,{ customer_name:val('#nm'), phone:val('#ph'), note:val('#nt') }); toast('Yadda saxlanıldı'); });
-  if(d.blocked) $('#ub').onclick=guard(async function(){ await upd(d.id,{ blocked:false, block_reason:null }); toast('Blok açıldı'); });
-  else $('#bl').onclick=guard(async function(){ if(!confirm(label(d)+' indi bloklansın?')) return 'skip'; await upd(d.id,{ blocked:true, block_reason:val('#br') }); toast('Bloklandı'); });
-  $('#sd').onclick=guard(async function(){
+  if($('#ub')) $('#ub').onclick=guard(async function(){ await upd(d.id,{ blocked:false, block_reason:null }); toast('Blok açıldı'); });
+  if($('#bl')) $('#bl').onclick=guard(async function(){ if(!confirm(label(d)+' indi bloklansın?')) return 'skip'; await upd(d.id,{ blocked:true, block_reason:val('#br') }); toast('Bloklandı'); });
+  if($('#sd')) $('#sd').onclick=guard(async function(){
     var v=$('#dt').value; if(!v){ toast('Tarix seç',{bad:true}); return 'skip'; }
     var p=v.split('-'); var ms=bkMidnight(+p[0], +p[1]-1, +p[2]+1);
     await upd(d.id,{ expires_at:new Date(ms).toISOString() }); toast('Son gün: '+lastDay(ms));
   });
-  $('#tr').onclick=guard(async function(){
+  if($('#tr')) $('#tr').onclick=guard(async function(){
     var r=await sb.rpc('add_payment',{ p_device_id:d.id, p_months:0, p_days:3, p_amount:null, p_note:'sınaq' });
     if(r.error) throw r.error; toast('+3 gün verildi', { action:['Geri al', function(){ undoLast(d.id); }] });
   });
@@ -547,8 +850,9 @@ function openDevice(id){
   $('#pr').onclick=guard(async function(){ if(!confirm(label(d)+' — uşaq kilidinin PIN-i 0000 olsun?')) return 'skip'; await upd(d.id,{ pin_reset_at:new Date().toISOString() }); toast('PIN sıfırlanır — 5 dəq ərzində 0000 olacaq'); });
   $('#rk').onclick=guard(async function(){ if(!confirm('Cihaz açarı sıfırlansın?')) return 'skip'; await upd(d.id,{ device_key:null }); toast('Açar sıfırlandı'); });
   $('#del').onclick=guard(async function(){
-    if(!confirm(label(d)+' və ödəniş tarixçəsi silinsin?')) return 'skip';
-    var r=await sb.from('devices').delete().eq('id',d.id); if(r.error) throw r.error;
+    /* v2.9: tarixçəsi olan müştəri silinmir (server yoxlayır) — onun əvəzinə arxivlənir */
+    if(!confirm(label(d)+' tamamilə silinsin?\n\nYalnız heç bir ödənişi və IPTV tarixçəsi olmayan qeyd silinə bilər. Tarixçəsi varsa silinməyəcək — "Arxivlə" istifadə edin.')) return 'skip';
+    var r=await sb.rpc('delete_customer',{ p_device_id:d.id }); if(r.error) throw r.error;
     current=null; closeSheet(); toast('Silindi');
   });
   loadPayments(d.id);
@@ -564,11 +868,12 @@ async function openReport(){
   bg.querySelector('#x').onclick=closeSheet;
   var p=bk(Date.now()), m=p.m+repMonth, y=p.y+Math.floor(m/12); m=((m%12)+12)%12;
   var from=bkMidnight(y,m,1), to=bkMidnight(m===11?y+1:y,(m+1)%12,1);
-  var r=await sb.from('payments').select('id,device_id,months,days,amount,note,created_at').gte('created_at',new Date(from).toISOString()).lt('created_at',new Date(to).toISOString()).order('created_at',{ascending:false}).limit(5000);
+  var r=await sb.from('payments').select('*').gte('created_at',new Date(from).toISOString()).lt('created_at',new Date(to).toISOString()).order('created_at',{ascending:false}).limit(5000);
   var box=bg.querySelector('#rp'); if(!box) return;
   if(r.error){ box.textContent=errText(r.error); return; }
-  var pays=(r.data||[]).filter(function(x){ return x.months>0; });
-  var trials=(r.data||[]).filter(function(x){ return x.days>0; }).length;
+  var live=(r.data||[]).filter(function(x){ return !x.voided_at; });   /* geri alınmış ödənişlər sayılmır */
+  var pays=live.filter(function(x){ return x.months>0; });
+  var trials=live.filter(function(x){ return x.days>0; }).length;
   var sum=pays.reduce(function(a,x){ return a+(Number(x.amount)||0); },0);
   var paidIds={}; pays.forEach(function(x){ paidIds[x.device_id]=true; });
   var byId={}; devices.forEach(function(d){ byId[d.id]=d; });
@@ -600,19 +905,18 @@ async function openRelease(){
   var onLatest=cur? devices.filter(function(d){ return d.app_version===cur.version_name; }).length : 0;
   box.className='';
   box.innerHTML=
-    (cur ? '<div class="kv"><div><small>Hazırkı versiya</small>'+esc(cur.version_name)+'</div><div><small>Yüklənib</small>'+fmtDT(cur.updated_at)+'</div>'+
-      '<div><small>Bu versiyada olan TV</small>'+onLatest+' / '+devices.length+'</div><div><small>Qeyd</small>'+esc(cur.notes||'—')+'</div></div>' :
-      '<div class="hint" style="margin-top:0">Hələ yeniləmə yüklənməyib.</div>')+
-    '<div class="sec"><h3>Yeni APK yüklə</h3>'+
-      '<label>APK faylı (GitHub Actions-dan VEXO.apk)</label><input id="apk" type="file" accept=".apk,application/vnd.android.package-archive">'+
-      '<label>Versiya (APK seçəndə özü yazılır)</label><input id="vn" placeholder="2.5.0" inputmode="decimal">'+
-      '<label>Müştəriyə qısa qeyd (istəyə bağlı)</label><textarea id="vt" placeholder="məs. Səs və altyazı seçimi əlavə olundu"></textarea>'+
+    (cur ? '<div class="subline" style="margin-top:0">Göndərilən versiya: <b>'+esc(cur.version_name)+'</b> ('+fmtDT(cur.updated_at).slice(0,10)+') · bu versiyada: <b>'+onLatest+' / '+devices.length+'</b> TV'+(cur.notes?'<br>Qeyd: '+esc(cur.notes):'')+'</div>' :
+      '<div class="subline" style="margin-top:0">Hələ yeniləmə göndərilməyib.</div>')+
+    '<div class="sec"><h3>Yeni versiya göndər</h3>'+
+      '<label>1. APK faylı</label><input id="apk" type="file" accept=".apk,application/vnd.android.package-archive">'+
+      '<label>2. Versiya (özü yazılır)</label><input id="vn" placeholder="APK seçin" inputmode="decimal">'+
+      '<label>3. Müştəriyə qeyd (istəyə bağlı)</label><input id="vt" maxlength="200" placeholder="məs. Kanallar daha tez açılır">'+
       '<div class="prog" id="pg" style="display:none"><i id="pgb"></i></div>'+
-      '<button class="btn primary block" id="go">Yüklə və TV-lərə göndər</button>'+
-      '<div class="hint">TV-lər 5 dəqiqə ərzində "Yeni versiya var — Yenilə" görəcək. Versiya nömrəsi APK-dakı ilə eyni olmalıdır, əks halda TV faylı qəbul etməz.</div>'+
-      (cur?'<button class="btn danger block" id="stop">Yeniləmə təklifini dayandır</button>':'')+
+      '<button class="btn primary block" id="go">Göndər</button>'+
+      '<div class="hint">TV-lər 5 dəqiqə ərzində "Yeni versiya var" görəcək.</div>'+
+      (cur?'<button class="link" id="stop">Yeniləmə təklifini dayandır</button>':'')+
     '</div>'+
-    (cur ? minVersionHtml(cur) : '');
+    (cur ? '<details class="fold"><summary>Məcburi yeniləmə (yalnız təcili hallar üçün)</summary>'+minVersionHtml(cur)+'</details>' : '');
   var vn=box.querySelector('#vn'), apk=box.querySelector('#apk');
   /* the version is read from the APK itself (assets/public/appinfo.json) */
   apk.onchange=async function(){
@@ -715,10 +1019,11 @@ var ACT={ activate:'✅ Aktivləşdirildi', payment_add:'💳 Ödəniş', trial:
   iptv_assign:'➕ IPTV yeri təyin edildi', iptv_release:'➖ IPTV yeri boşaldıldı', iptv_suspend:'⏸ IPTV yeri dayandırıldı', iptv_resume:'▶ IPTV yeri bərpa edildi',
   iptv_transfer:'↔ Başqa hesaba köçürüldü', iptv_transfer_in:'↔ Yeni hesaba gəldi', iptv_revoke_manual:'✔ Silinmə əl ilə təsdiqləndi', rc_enroll_reset:'🔄 Playlist qoşulması sıfırlandı',
   device_replace:'📺 Cihaz dəyişdirildi', device_replace_in:'📺 Yeni cihaz', installed_on:'🛠 Quraşdırma tarixi',
-  finance_income:'💰 Gəlir', finance_expense:'💸 Xərc', finance_void:'🚫 Maliyyə qeydi ləğv edildi', payment_meta:'💳 Ödəniş üsulu' };
+  finance_income:'💰 Gəlir', finance_expense:'💸 Xərc', finance_void:'🚫 Maliyyə qeydi ləğv edildi', payment_meta:'💳 Ödəniş üsulu',
+  customer_archive:'📦 Müştəri arxivləndi', customer_restore:'♻ Arxivdən çıxarıldı' };
 var FIELD={ customer_name:'Ad', phone:'Telefon', note:'Qeyd', reg_limit_10min:'10 dəq limiti', reg_limit_day:'Gündəlik limit',
   reg_window_until:'Pəncərə', reg_window_limit:'Pəncərə limiti', pending_cleanup_days:'Təmizləmə (gün)', err_daily_quota:'Xəta kvotası',
-  resale_enabled:'2 müştəri rejimi', resale_approval_ref:'İcazə sənədi', resale_set_at:'Rejim tarixi', monthly_fee_azn:'Aylıq qiymət', partners:'Partnyorlar',
+  resale_enabled:'2 müştəri rejimi', resale_approval_ref:'İcazə sənədi', resale_set_at:'Rejim tarixi', monthly_fee_azn:'Aylıq tarif', partners:'Partnyorlar',
   provider:'Provayder', subuser:'Sub-user', provider_user_id:'TVTEAM ID', label_change:'Ad', display_name:'TV-də ad', max_connections:'Maks. qoşulma', max_assignments:'Maks. müştəri', status:'Status', notes:'Qeyd' };
 function vcName(c){ c=+c||0; return c ? Math.floor(c/10000)+'.'+Math.floor(c%10000/100)+'.'+(c%100) : 'söndürülüb'; }
 function dayOrDash(v){ return v ? lastDayShort(Date.parse(v)) : '—'; }
@@ -726,7 +1031,9 @@ function logDetails(l){
   var x=l.details||{};
   switch(l.action){
     case 'activate': case 'payment_add': case 'trial':
-      return (x.months? x.months+' ay' : x.days+' gün')+(x.amount!=null?' · '+Number(x.amount).toFixed(2)+' ₼':'')+' · '+dayOrDash(x.from)+' → '+dayOrDash(x.to)+(x.note?' · '+esc(x.note):'');
+      return (x.months? x.months+' ay' : x.days+' gün')+(x.amount!=null?' · '+Number(x.amount).toFixed(2)+' ₼':'')+' · '+dayOrDash(x.from)+' → '+dayOrDash(x.to)+(x.note?' · '+esc(x.note):'')+(x.override_reason?' · fərqli məbləğ ('+(x.expected!=null?'tarif '+Number(x.expected).toFixed(2)+' ₼':'tarif yox')+'): '+esc(x.override_reason):'');
+    case 'customer_archive': return (x.reason?'Səbəb: '+esc(x.reason):'')+(x.iptv?' · IPTV yeri '+esc(x.iptv.slot)+' boşaldıldı':'')+(x.payments!=null?' · '+esc(x.payments)+' ödəniş qorunur':'');
+    case 'customer_restore': return 'Bitmə: '+dayOrDash(x.expires_at)+(x.blocked?' · bloklu':'');
     case 'payment_undo': return (x.months? x.months+' ay' : x.days+' gün')+(x.amount!=null?' · '+Number(x.amount).toFixed(2)+' ₼':'')+' · son gün yenə: '+dayOrDash(x.restored_to);
     case 'block': return x.reason ? 'Səbəb: '+esc(x.reason) : '';
     case 'expiry_set': return dayOrDash(x.from)+' → '+dayOrDash(x.to);
@@ -868,19 +1175,18 @@ async function openSettings(){
   box.innerHTML=
     '<div class="sec" style="border-top:0;margin-top:0;padding-top:0"><h3>Yeni cihaz qeydiyyatı</h3>'+
       (open ? '<div class="preview" style="margin-top:0"><b>Quraşdırıcı pəncərəsi açıqdır</b> — '+fmtDT(s.reg_window_until).slice(11)+'-a qədər (limit: 10 dəqiqədə '+s.reg_window_limit+')</div>'
-            : '<div class="hint" style="margin-top:0">Normal rejim: 10 dəqiqədə ən çox '+s.reg_limit_10min+', gündə ən çox '+s.reg_limit_day+' yeni cihaz. Limit dolanda yeni TV "Cihaz aktiv deyil" ekranını göstərir və 5 dəqiqədən bir yenidən cəhd edir.</div>')+
-      '<div class="kv"><div><small>Son 10 dəqiqədə yeni</small>'+new10+'</div><div><small>Son 24 saatda yeni</small>'+new24+'</div></div>'+
+            : '<div class="subline" style="margin-top:0">Normal rejim. Yeni TV-lər: son 10 dəqiqədə <b>'+new10+'</b>, son 24 saatda <b>'+new24+'</b>.</div>')+
+      '<div class="hint">Bir neçə TV quraşdıracaqsınızsa, pəncərəni açın — yeni TV-lər gözləmədən qoşulur.</div>'+
       '<div class="rowbtns"><button class="btn primary" data-w="30">30 dəq aç</button><button class="btn" data-w="120">2 saat aç</button>'+(open?'<button class="btn" data-w="0">Bağla</button>':'')+'</div>'+
-      '<div class="hint">Çox TV quraşdıranda pəncərəni açın: limitlər müvəqqəti artır. Mövcud müştərilərə heç bir limit təsir etmir.</div></div>'+
-    '<div class="sec"><h3>Limitlər</h3><div class="grid2">'+
+    '<details class="fold"><summary>Texniki limitlər</summary><div class="grid2">'+
       '<div><label>10 dəqiqədə yeni cihaz</label><input id="l10" type="number" min="1" max="1000" value="'+s.reg_limit_10min+'"></div>'+
       '<div><label>Gündə yeni cihaz</label><input id="lday" type="number" min="1" max="10000" value="'+s.reg_limit_day+'"></div>'+
       '<div><label>Pəncərədə (10 dəq)</label><input id="lwin" type="number" min="1" max="2000" value="'+s.reg_window_limit+'"></div>'+
       '<div><label>Xəta kvotası (gündə/cihaz)</label><input id="lerr" type="number" min="0" max="1000" value="'+s.err_daily_quota+'"></div></div>'+
-      '<button class="btn block" id="lsv">Limitləri yadda saxla</button></div>'+
+      '<button class="btn block" id="lsv">Limitləri yadda saxla</button><div class="hint">Normalda dəyişmək lazım deyil. Mövcud müştərilərə təsir etmir.</div></details></div>'+
     '<div class="sec"><h3>Köhnə gözləyən qeydlər</h3>'+
       '<label>Neçə gün aktivləşdirilməyən boş qeydlər təmizlənsin</label><input id="cdays" type="number" min="7" max="365" value="'+s.pending_cleanup_days+'">'+
-      '<div class="hint">Yalnız bu qeydlər silinir: heç vaxt aktivləşdirilməyib, ödənişi yoxdur, bloklanmayıb, adı / telefonu / qeydi yazılmayıb və bu müddətdə serverə qoşulmayıb. Ödənişi və tarixçəsi olan müştəri heç vaxt silinmir.</div>'+
+      '<div class="hint">Yalnız heç vaxt aktivləşdirilməmiş, adı və ödənişi olmayan boş qeydlər. Müştərilər heç vaxt silinmir.</div>'+
       '<button class="btn block" id="cprev">Yoxla (heç nə silinmir)</button><div id="cres"></div></div>'+resaleHtml(s);
   wireResale(box);
   box.querySelectorAll('[data-w]').forEach(function(b){ b.onclick=guard(async function(){
@@ -977,27 +1283,27 @@ async function openIptv(){
   box.innerHTML=
     (iptv.resale_enabled
       ? '<div class="preview" style="margin-top:0"><b>2 müştəri / 1 hesab rejimi AÇIQDIR</b> — icazə sənədi: '+esc(iptv.resale_approval_ref||'—')+'</div>'
-      : '<div class="warnbox" style="margin-top:0"><b>2 müştəri / 1 hesab rejimi SÖNÜLÜDÜR.</b> Hər hesaba yalnız 1 müştəri təyin olunur. Provayderin (TVTEAM) yazılı icazəsi təsdiqlənəndən sonra "Qeydiyyat və ayarlar" bölməsindən açılır.</div>')+
-    '<div class="big-n mgrid">'+
-      '<div><b>'+(m.accounts_total||0)+'</b><span>Hesab</span></div><div><b>'+(m.accounts_active||0)+'</b><span>Aktiv hesab</span></div>'+
-      '<div><b>'+(m.slots_total||0)+'</b><span>Ümumi yer</span></div><div><b>'+(m.slots_used||0)+'</b><span>Tutulub</span></div><div><b>'+(m.slots_free||0)+'</b><span>Boş yer</span></div>'+
-      '<div><b>'+(m.accounts_expired||0)+'</b><span>Bitmiş hesab</span></div><div><b>'+(m.accounts_expiring||0)+'</b><span>7 gündə bitir</span></div>'+
-      '<div><b>'+(m.customers_unassigned||0)+'</b><span>IPTV-siz müştəri</span></div><div><b>'+(m.customers_awaiting_payment||0)+'</b><span>Ödəniş gözləyir</span></div><div><b>'+(m.sync_failures||0)+'</b><span>Sinxron xətası</span></div>'+
-    '</div>'+
+      : '')+
+    /* v2.9.1: one summary line; warnings only when there is something to do */
+    '<div class="subline" style="margin-top:0"><b>'+(m.accounts_total||0)+'</b> hesab · <b>'+(m.slots_used||0)+'</b> müştəri · <b style="color:var(--ok)">'+(m.slots_free||0)+'</b> boş yer'+(iptv.resale_enabled?' · 2 müştəri rejimi':'')+'</div>'+
+    ((m.accounts_expiring||m.sync_failures||m.customers_unassigned) ? '<div class="alertline">'+[
+      m.accounts_expiring?'⏰ 7 gündə bitən hesab: <b>'+m.accounts_expiring+'</b>':'',
+      m.sync_failures?'⚠ Playlist göndərilə bilməyən: <b>'+m.sync_failures+'</b>':'',
+      m.customers_unassigned?'📺 IPTV yeri olmayan aktiv müştəri: <b>'+m.customers_unassigned+'</b>':''].filter(Boolean).join('<br>')+'</div>' : '')+
     ((m.pending_releases||m.needs_app_update||m.over_capacity) ? '<div class="hint" style="margin-top:0">'+
       (m.pending_releases?'⏳ Cihazdan silinməsi gözlənilən: <b>'+m.pending_releases+'</b> · ':'')+
       (m.needs_app_update?'⬆ Tətbiqi 2.8.0-dan köhnə olan təyinat: <b>'+m.needs_app_update+'</b> (playlist almır) · ':'')+
       (m.over_capacity?'⚠ Limitdən artıq müştərisi olan hesab: <b>'+m.over_capacity+'</b>':'')+'</div>' : '')+
-    '<div class="rowbtns"><button class="btn primary" id="newacc">+ Yeni IPTV hesabı</button><button class="btn" id="csv">CSV (parolsuz)</button></div>'+
-    '<div class="search" style="margin-top:12px">'+ICON.search+'<input id="iq" placeholder="Sub-user, ad, telefon, MAC, ID" value="'+esc(iptvF.q)+'"></div>'+
-    '<div class="filters">'+
+    '<div class="rowbtns"><button class="btn primary" id="newacc">+ Yeni hesab</button><button class="btn" id="csv">CSV</button></div>'+
+    '<div class="search" style="margin-top:12px">'+ICON.search+'<input id="iq" placeholder="Axtar: hesab, müştəri, telefon" value="'+esc(iptvF.q)+'"></div>'+
+    '<details class="ifold" id="ifilt"'+((iptvF.prov||iptvF.st||iptvF.slots||iptvF.exp||iptvF.pkg||(iptvF.sort&&iptvF.sort!=='expiry'))?' open':'')+'><summary>Filtr və sıralama</summary><div class="filters">'+
       '<select id="ip"><option value="">Bütün provayderlər</option>'+Object.keys(provs).map(function(p){ return '<option'+(iptvF.prov===p?' selected':'')+'>'+esc(p)+'</option>'; }).join('')+'</select>'+
       '<select id="is"><option value="">Bütün statuslar</option>'+Object.keys(PSTATE).map(function(k){ return '<option value="'+k+'"'+(iptvF.st===k?' selected':'')+'>'+PSTATE[k][0]+'</option>'; }).join('')+'</select>'+
       '<select id="isl"><option value="">Bütün yerlər</option><option value="free"'+(iptvF.slots==='free'?' selected':'')+'>Boş yeri olan</option><option value="full"'+(iptvF.slots==='full'?' selected':'')+'>Dolu</option><option value="pending"'+(iptvF.slots==='pending'?' selected':'')+'>Silinmə gözləyən</option><option value="sync"'+(iptvF.slots==='sync'?' selected':'')+'>Sinxron xətası</option></select>'+
       '<select id="ie"><option value="">Bitmə: hamısı</option><option value="7"'+(iptvF.exp==='7'?' selected':'')+'>7 gün içində</option><option value="30"'+(iptvF.exp==='30'?' selected':'')+'>30 gün içində</option><option value="exp"'+(iptvF.exp==='exp'?' selected':'')+'>Bitib</option></select>'+
       '<select id="ipk"><option value="">Bütün paketlər</option>'+Object.keys(pkgs).sort().map(function(p){ return '<option'+(iptvF.pkg===p?' selected':'')+'>'+esc(p)+'</option>'; }).join('')+'</select>'+
       '<select id="iso"><option value="expiry"'+(iptvF.sort==='expiry'?' selected':'')+'>Sırala: bitmə tarixi</option><option value="free"'+(iptvF.sort==='free'?' selected':'')+'>Sırala: boş yer</option><option value="name"'+(iptvF.sort==='name'?' selected':'')+'>Sırala: ad</option><option value="new"'+(iptvF.sort==='new'?' selected':'')+'>Sırala: ən yeni</option></select>'+
-    '</div>'+
+    '</div></details>'+
     '<div id="ilist" class="list" style="margin-top:8px"></div><div class="rowbtns" id="ipg"></div>';
   var $=function(s){ return box.querySelector(s); };
   $('#newacc').onclick=function(){ openAccountForm(null); };
@@ -1060,7 +1366,7 @@ function accRow(a){
   return '<div class="row" style="display:block;cursor:pointer" data-acc="'+esc(a.id)+'">'+
     '<div class="l1"><span class="no">'+esc(accName(a))+'</span>'+pill(ps)+(a.over_capacity?'<span class="pill bad">Limitdən artıq</span>':'')+(a.has_credentials?'':'<span class="pill warn">Playlist daxil edilməyib</span>')+'</div>'+
     '<div class="l2">'+esc(a.provider)+(a.provider_user_id?' · ID '+esc(a.provider_user_id):'')+' · bitmə: '+(a.expiry?dshort(a.expiry)+(dl!=null&&dl>0?' ('+dl+' gün)':''):'—')+(a.package_names?' · '+esc(a.package_names):'')+' · '+money(a.total_azn)+'</div>'+
-    '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+(a.slots||[]).map(slotBox).join('')+'</div></div>';
+    '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+(a.slots||[]).filter(function(x){ return x.state!=='LOCKED'; }).map(slotBox).join('')+'</div></div>';
 }
 
 /* ---------------- yeni / redaktə ---------------- */
@@ -1426,25 +1732,41 @@ async function openFinance(){
   var toEx=addDaysStr(addMonthsStr(rg[1],1),0);
   var fe=await sb.from('finance_entries').select('*').gte('entry_date',rg[0]).lt('entry_date',toEx).order('entry_date',{ascending:false}).limit(1000);
   var fromIso=new Date(Date.parse(rg[0]+'T00:00:00+04:00')).toISOString(), toIso=new Date(Date.parse(toEx+'T00:00:00+04:00')).toISOString();
-  var py=await sb.from('payments').select('id,device_id,months,days,amount,method,received_by,created_at').gte('created_at',fromIso).lt('created_at',toIso).order('created_at',{ascending:false}).limit(5000);
+  var py=await sb.from('payments').select('*').gte('created_at',fromIso).lt('created_at',toIso).order('created_at',{ascending:false}).limit(5000);
   if(!iptv) await loadIptv();
   var pk=[]; (iptv?iptv.accounts:[]).forEach(function(a){ (a.packages||[]).forEach(function(p){ if(p.purchased_on>=rg[0] && p.purchased_on<toEx) pk.push(Object.assign({ acc:accName(a) },p)); }); });
   var byId={}; devices.forEach(function(d){ byId[d.id]=d; });
   var s=settingsCache||{};
   box.className='';
-  var monthsRows=(R.months||[]).map(function(m){ return '<tr><td>'+esc(m.month)+'</td><td class="r">'+money(m.revenue)+'</td><td class="r">'+money(m.provider_alloc)+'</td><td class="r">'+money(m.op_expenses)+'</td><td class="r"><b>'+money(m.net_operating)+'</b></td><td class="r">'+money(m.cash_flow)+'</td></tr>'; }).join('');
+  var v2=R.version>=2;   /* v2.9: mənfəət xidmət aylarına bölünür, kassa ayrıca */
+  function acc(m){ return v2 ? m.revenue_accrued : m.revenue; }
+  function col(x){ return 'color:'+(x<0?'var(--bad)':'var(--ok)'); }
+  var monthsRows=(R.months||[]).map(function(m){ return '<tr><td>'+esc(m.month)+'</td><td class="r">'+money(acc(m))+'</td><td class="r">'+money(m.provider_alloc)+'</td><td class="r">'+money(m.op_expenses)+'</td><td class="r"><b>'+money(m.net_operating)+'</b></td>'+
+    '<td class="r">'+money(m.revenue)+'</td><td class="r">'+money(m.cash_out)+'</td><td class="r">'+money(m.cash_flow)+'</td></tr>'; }).join('');
   box.innerHTML=
     '<div class="chips">'+[['month','Bu ay'],['last','Keçən ay'],['year','Bu il'],['12','Son 12 ay'],['custom','Seçilmiş']].map(function(x){ return '<button class="chip'+(finF.range===x[0]?' on':'')+'" data-fr="'+x[0]+'">'+x[1]+'</button>'; }).join('')+'</div>'+
     (finF.range==='custom'?'<div class="grid2"><input id="ff" type="month" value="'+esc(finF.from)+'"><input id="ft" type="month" value="'+esc(finF.to)+'"></div><button class="btn block" id="fgo" style="margin-top:8px">Göstər</button>':'')+
-    '<div class="hint" style="margin-top:4px">Dövr: '+dshort(R.from)+' — '+dshort(R.to)+'. Bütün məbləğlər AZN-dir (xarici valyuta daxil edilən məzənnə ilə).</div>'+
-    '<div class="big-n mgrid"><div><b>'+money(T.revenue)+'</b><span>Gəlir</span></div><div><b>'+money(T.provider_alloc)+'</b><span>Provayder xərci (bu dövrə düşən)</span></div><div><b>'+money(T.op_expenses)+'</b><span>Digər xərclər</span></div>'+
-      '<div><b style="color:'+(T.gross_profit<0?'var(--bad)':'var(--ok)')+'">'+money(T.gross_profit)+'</b><span>Ümumi mənfəət</span></div><div><b style="color:'+(T.net_operating<0?'var(--bad)':'var(--ok)')+'">'+money(T.net_operating)+'</b><span>Xalis nəticə</span></div><div><b>'+money(T.cash_flow)+'</b><span>Pul axını (kassa)</span></div></div>'+
-    '<div class="hint" style="margin-top:0"><b>Mənfəət</b> — illik paketin dəyəri günlərə bölünür, hər aya öz payı düşür. <b>Pul axını</b> — pul nə vaxt ödənilibsə o ayda: illik paketin hamısı alış ayında. Bu dövrdə provayderə ödənilən: <b>'+money(T.provider_cash)+'</b>. Qabaqcadan ödənilmiş, hələ istifadə olunmamış qalıq: <b>'+money(R.prepaid_remaining)+'</b>.</div>'+
-    '<div class="kv"><div><small>Abunəlik gəliri</small>'+money(T.sub_income)+'</div><div><small>Quraşdırma + digər gəlir</small>'+money((+T.install_income||0)+(+T.other_income||0))+'</div>'+
-      '<div><small>Gözlənilən ödənişlər</small>'+(R.outstanding?R.outstanding.count:0)+' müştəri'+(R.outstanding&&R.outstanding.estimated_azn!=null?' · ≈ '+money(R.outstanding.estimated_azn):' · aylıq qiymət yazılmayıb')+'</div><div><small>Aylıq abunə qiyməti</small>'+(s.monthly_fee_azn!=null?money(s.monthly_fee_azn):'—')+'</div></div>'+
-    ((R.months||[]).length>1?'<div class="sec"><h3>Aylar üzrə</h3><table class="rep-tab"><tr><td class="m">Ay</td><td class="r m">Gəlir</td><td class="r m">Provayder</td><td class="r m">Xərclər</td><td class="r m">Nəticə</td><td class="r m">Kassa</td></tr>'+monthsRows+'</table></div>':'')+
+    '<div class="subline" style="margin-top:6px">'+dshort(R.from)+' — '+dshort(R.to)+' · AZN</div>'+
+    '<div class="kpi"><div><b>'+money(T.revenue)+'</b><span>Daxil olan</span></div><div><b>'+money(T.cash_out!=null?T.cash_out:(+T.provider_cash||0)+(+T.op_expenses||0))+'</b><span>Xərclər</span></div><div><b style="'+col(T.cash_flow)+'">'+money(T.cash_flow)+'</b><span>Kassa qalığı</span></div></div>'+
+    '<div class="subline">Mənfəət (xidmət aylarına bölünmüş): <b style="'+col(T.net_operating)+'">'+money(T.net_operating)+'</b>'+(R.outstanding&&R.outstanding.count?' · ödəniş gözlənilir: <b>'+R.outstanding.count+'</b> müştəri'+(R.outstanding.estimated_azn!=null?' ≈ '+money(R.outstanding.estimated_azn):''):'')+'</div>'+
+    '<button class="btn block" id="frep" style="margin-top:10px">'+ICON.chart+' Bu ay kim ödəyib, kim ödəməyib</button>'+
+    '<details class="fold"><summary>Ətraflı: mənfəət və pul axını</summary>'+
+    '<h3 style="margin:14px 0 0">Mənfəət <span class="m" style="font-weight:400;font-size:12px;color:var(--muted)">— xidmət aylarına bölünmüş</span></h3>'+
+    '<div class="big-n mgrid"><div><b>'+money(acc(T))+'</b><span>Gəlir (bu dövrə aid)</span></div><div><b>'+money(T.provider_alloc)+'</b><span>Provayder xərci (bu dövrə düşən)</span></div><div><b>'+money(T.op_expenses)+'</b><span>Digər xərclər</span></div>'+
+      '<div><b style="'+col(T.gross_profit)+'">'+money(T.gross_profit)+'</b><span>Ümumi mənfəət</span></div><div><b style="'+col(T.net_operating)+'">'+money(T.net_operating)+'</b><span>Xalis nəticə</span></div></div>'+
+    '<h3 style="margin:14px 0 0">Pul axını <span class="m" style="font-weight:400;font-size:12px;color:var(--muted)">— kassa: pul nə vaxt alınıb / ödənilib</span></h3>'+
+    '<div class="big-n mgrid"><div><b>'+money(T.revenue)+'</b><span>Daxil olan</span></div><div><b>'+money(T.provider_cash)+'</b><span>Provayderə ödənilən</span></div><div><b>'+money(T.op_expenses)+'</b><span>Digər xərclər</span></div>'+
+      '<div><b style="'+col(T.cash_flow)+'">'+money(T.cash_flow)+'</b><span>Kassa nəticəsi</span></div></div>'+
+    '<div class="hint" style="margin-top:0"><b>Mənfəət</b> — müştərinin 12 aylıq ödənişi 12 xidmət ayına, provayderin illik paketi istifadə günlərinə bölünür; hər aya öz payı düşür. <b>Pul axını</b> — pul nə vaxt alınıbsa / ödənilibsə o ayda tam göstərilir. Geri alınmış ödənişlər heç birinə daxil deyil.</div>'+
+    '<div class="kv">'+(v2?'<div><small>Müştərilərin qabaqcadan ödədiyi (gələcək aylara aid)</small>'+money(R.deferred_revenue)+'</div>':'')+
+      '<div><small>Provayderə qabaqcadan ödənilmiş qalıq</small>'+money(R.prepaid_remaining)+'</div>'+
+      '<div><small>Abunə ödənişləri (kassa)</small>'+money(T.sub_income)+'</div><div><small>Quraşdırma + digər gəlir</small>'+money((+T.install_income||0)+(+T.other_income||0))+'</div>'+
+      '<div><small>Gözlənilən ödənişlər</small>'+(R.outstanding?R.outstanding.count:0)+' müştəri'+(R.outstanding&&R.outstanding.estimated_azn!=null?' · ≈ '+money(R.outstanding.estimated_azn):(R.outstanding&&R.outstanding.count?' · aylıq tarif yazılmayıb':''))+(R.outstanding&&R.outstanding.fee_missing?' · '+R.outstanding.fee_missing+' müştərinin tarifi yoxdur':'')+'</div><div><small>Standart aylıq tarif</small>'+(s.monthly_fee_azn!=null?money(s.monthly_fee_azn):'—')+'</div></div>'+
+    '</details>'+
+    ((R.months||[]).length>1?'<div class="sec"><h3>Aylar üzrə</h3><div style="overflow-x:auto"><table class="rep-tab"><tr><td class="m">Ay</td><td class="r m">Gəlir (bölünmüş)</td><td class="r m">Provayder (bölünmüş)</td><td class="r m">Xərclər</td><td class="r m">Xalis nəticə</td><td class="r m">Kassa: daxil</td><td class="r m">Kassa: çıxış</td><td class="r m">Kassa nəticəsi</td></tr>'+monthsRows+
+      '<tr><td><b>CƏMİ</b></td><td class="r"><b>'+money(acc(T))+'</b></td><td class="r"><b>'+money(T.provider_alloc)+'</b></td><td class="r"><b>'+money(T.op_expenses)+'</b></td><td class="r"><b>'+money(T.net_operating)+'</b></td><td class="r"><b>'+money(T.revenue)+'</b></td><td class="r"><b>'+money(T.cash_out)+'</b></td><td class="r"><b>'+money(T.cash_flow)+'</b></td></tr></table></div></div>':'')+
     '<div class="sec"><h3>Partnyorlar (avtomatik bölünmür)</h3>'+((R.partners||[]).length?'<table class="rep-tab"><tr><td class="m">Partnyor</td><td class="r m">Aldığı</td><td class="r m">Ödədiyi</td></tr>'+R.partners.map(function(p){ return '<tr><td>'+esc(p.partner||'(göstərilməyib)')+'</td><td class="r">'+money(p.collected)+'</td><td class="r">'+money(p.paid)+'</td></tr>'; }).join('')+'</table>':'<div class="hint" style="margin-top:0">Bu dövrdə qeyd yoxdur.</div>')+'</div>'+
-    '<div class="sec"><h3>Yeni gəlir / xərc</h3><div class="grid2">'+
+    '<div class="sec"><h3 hidden>Yeni gəlir / xərc</h3><details class="fold" id="eform" style="margin-top:0"><summary>+ Xərc və ya gəlir əlavə et</summary><div class="grid2">'+
       '<div><label>Növ</label><select id="ek"><option value="expense">Xərc</option><option value="income">Gəlir</option></select></div><div><label>Kateqoriya</label><select id="ec"></select></div>'+
       '<div><label>Tarix</label><input id="ed" type="date" value="'+todayStr()+'"></div><div><label>Məbləğ</label><input id="ea" type="number" min="0" step="0.01" inputmode="decimal"></div>'+
       '<div><label>Valyuta</label><select id="ecu">'+CURR.map(function(c){ return '<option>'+c+'</option>'; }).join('')+'</select></div><div><label>Məzənnə (1 vahid = ? AZN)</label><input id="er" type="number" min="0" step="0.0001" value="1" disabled></div>'+
@@ -1453,11 +1775,12 @@ async function openFinance(){
       '<label>Təsvir</label><input id="eds" maxlength="300">'+
       '<div class="preview" id="epv"></div>'+partnerOptions()+
       '<button class="btn green block" id="eadd">Əlavə et</button>'+
-      '<div class="hint">Abunə ödənişləri buraya yazılmır — müştəri kartında "Ödəniş alındı" ilə daxil edilir (iki dəfə sayılmasın). Provayder (TVTEAM) alışları da IPTV hesabının "Paketlər" bölməsində qeyd olunur.</div></div>'+
+      '<div class="hint">Abunə ödənişləri buraya yazılmır — onlar müştəri kartından daxil olur. TVTEAM paketləri IPTV hesabında yazılır.</div></details></div>'+
     '<div class="sec"><h3>Bu dövrün qeydləri</h3><div id="elst"></div><div class="rowbtns"><button class="btn" id="ecsv">CSV ixrac (hesabat + qeydlər)</button></div></div>'+
-    '<div class="sec"><h3>Ayarlar</h3><div class="grid2"><div><label>Aylıq abunə qiyməti (AZN)</label><input id="sfee" type="number" min="0" step="0.01" value="'+esc(s.monthly_fee_azn!=null?s.monthly_fee_azn:'')+'"></div>'+
-      '<div><label>Partnyorlar (vergüllə)</label><input id="sprt" value="'+esc((s.partners||[]).join(', '))+'" placeholder="məs. Nizami, Elvin"></div></div><button class="btn block" id="ssv">Yadda saxla</button></div>';
+    '<div class="sec"><h3>Ayarlar</h3><div class="grid2"><div><label>Standart aylıq tarif (AZN)</label><input id="sfee" type="number" min="0" step="0.01" value="'+esc(s.monthly_fee_azn!=null?s.monthly_fee_azn:'')+'"></div>'+
+      '<div><label>Partnyorlar (vergüllə)</label><input id="sprt" value="'+esc((s.partners||[]).join(', '))+'" placeholder="məs. Nizami, Elvin"></div></div><button class="btn block" id="ssv">Yadda saxla</button><div class="hint">Standart tarif — ayrıca tarifi olmayan müştərilər üçün. Müştərinin öz tarifi kartında, "Müştəri" bölməsində təyin olunur. Tarif dəyişəndə əvvəlki ödənişlər dəyişmir.</div></div>';
   var $=function(q){ return box.querySelector(q); };
+  $('#frep').onclick=function(){ repMonth=0; openReport(); };
   box.querySelectorAll('[data-fr]').forEach(function(b){ b.onclick=function(){ finF.range=b.getAttribute('data-fr'); if(finF.range==='custom'&&!finF.from){ var p=bk(Date.now()); finF.from=finF.to=p.y+'-'+pad(p.m+1); } openFinance(); }; });
   if($('#fgo')) $('#fgo').onclick=function(){ finF.from=$('#ff').value; finF.to=$('#ft').value; if(!finF.from||!finF.to||finF.to<finF.from){ toast('Ayları yoxlayın',{bad:true}); return; } openFinance(); };
   function cats(){ var k=$('#ek').value, c=FCAT[k]; $('#ec').innerHTML=Object.keys(c).map(function(x){ return '<option value="'+x+'">'+c[x]+'</option>'; }).join(''); $('#epl').textContent=k==='income'?'Kim aldı':'Kim ödədi'; prev(); }
@@ -1472,20 +1795,28 @@ async function openFinance(){
     if(q.error) throw q.error; toast('Əlavə olundu ('+money(q.data.amount_azn)+')'); openFinance(); return 'skip';
   });
   var items=[];
-  (py.data||[]).forEach(function(p){ var d=byId[p.device_id], bp=bk(Date.parse(p.created_at)), day=bp.y+'-'+pad(bp.m+1)+'-'+pad(bp.d); items.push({ d:dshort(day), iso:day+'T'+p.created_at.slice(11), t:'Abunə ödənişi', who:(d?'#'+d.customer_no:'')+' · '+(p.months?p.months+' ay':p.days+' gün'), m:p.method, p:p.received_by, amt:+p.amount||0, sign:1 }); });
+  (py.data||[]).forEach(function(p){ var d=byId[p.device_id], bp=bk(Date.parse(p.created_at)), day=bp.y+'-'+pad(bp.m+1)+'-'+pad(bp.d); items.push({ d:dshort(day), iso:day+'T'+p.created_at.slice(11), t:'Abunə ödənişi', who:(d?'#'+d.customer_no:'')+' · '+(p.months?p.months+' ay':p.days+' gün')+(p.override_reason?' · fərqli məbləğ: '+p.override_reason:''), m:p.method, p:p.received_by, amt:+p.amount||0, sign:1, voided:!!p.voided_at, vr:p.void_reason }); });
   (fe.data||[]).forEach(function(f){ items.push({ id:f.id, d:dshort(f.entry_date), iso:f.entry_date, t:(FCAT[f.kind]||{})[f.category]||f.category, who:(f.description||'')+(f.currency!=='AZN'?' ('+f.amount+' '+f.currency+' × '+f.fx_rate+')':''), m:f.method, p:f.partner, amt:+f.amount_azn, sign:f.kind==='income'?1:-1, voided:!!f.voided_at, vr:f.void_reason }); });
   pk.forEach(function(p){ items.push({ d:dshort(p.purchased_on), iso:p.purchased_on, t:'Provayder: '+(p.kind==='renewal'?'yeniləmə':'alış'), who:p.acc+' · '+p.package+(p.currency!=='AZN'?' ('+p.amount+' '+p.currency+' × '+p.fx_rate+')':''), p:p.paid_by, amt:+p.amount_azn, sign:-1, voided:p.voided, vr:p.void_reason }); });
   items.sort(function(a,b){ return String(b.iso).localeCompare(String(a.iso)); });
   $('#elst').innerHTML = items.length ? items.slice(0,300).map(function(i){
     return '<div class="payh"><div>'+(i.voided?'<s>':'')+esc(i.d)+' · '+esc(i.t)+(i.voided?'</s> <span class="m">ləğv: '+esc(i.vr||'')+'</span>':'')+'<div class="m">'+esc(i.who||'')+(i.m?' · '+esc(METHOD[i.m]||i.m):'')+(i.p?' · '+esc(i.p):'')+'</div></div>'+
-      '<div style="white-space:nowrap;color:'+(i.sign>0?'var(--ok)':'#ff8a8a')+'">'+(i.sign>0?'+':'−')+money(i.amt)+(i.id&&!i.voided?'<button class="undo" data-fv="'+i.id+'">Ləğv et</button>':'')+'</div></div>'; }).join('') : '<div class="hint" style="margin-top:0">Qeyd yoxdur.</div>';
+      '<div style="white-space:nowrap;color:'+(i.voided?'var(--muted)':i.sign>0?'var(--ok)':'#ff8a8a')+'">'+(i.voided?'<s>':'')+(i.sign>0?'+':'−')+money(i.amt)+(i.voided?'</s>':'')+(i.id&&!i.voided?'<button class="undo" data-fv="'+i.id+'">Ləğv et</button>':'')+'</div></div>'; }).join('') : '<div class="hint" style="margin-top:0">Qeyd yoxdur.</div>';
   box.querySelectorAll('[data-fv]').forEach(function(b){ b.onclick=guard(async function(){
     var why=prompt('Qeyd ləğv olunsun? Səbəb yazın (silinmir, "ləğv" kimi qalır):',''); if(why===null) return 'skip'; if(why.trim().length<3){ toast('Səbəb yazın',{bad:true}); return 'skip'; }
     var q=await sb.rpc('finance_void',{ p_id:+b.getAttribute('data-fv'), p_reason:why.trim() }); if(q.error) throw q.error; toast('Ləğv olundu'); openFinance(); return 'skip'; }); });
   $('#ecsv').onclick=function(){
-    var rows=[['VEXO maliyyə hesabatı',R.from,R.to],[],['Ay','Abunə gəliri','Quraşdırma gəliri','Digər gəlir','Gəlir cəmi','Provayder (ödənilən)','Provayder (bölüşdürülmüş)','Digər xərclər','Ümumi mənfəət','Xalis nəticə','Pul axını']];
-    (R.months||[]).forEach(function(m){ rows.push([m.month,m.sub_income,m.install_income,m.other_income,m.revenue,m.provider_cash,m.provider_alloc,m.op_expenses,m.gross_profit,m.net_operating,m.cash_flow]); });
-    rows.push(['CƏMİ',T.sub_income,T.install_income,T.other_income,T.revenue,T.provider_cash,T.provider_alloc,T.op_expenses,T.gross_profit,T.net_operating,T.cash_flow]);
+    function n2(x){ return x==null||x===''?'':Number(x).toFixed(2); }
+    var rows=[['VEXO maliyyə hesabatı (AZN)',R.from,R.to],[],
+      ['Ay','KASSA: Abunə ödənişləri','KASSA: Quraşdırma gəliri','KASSA: Digər gəlir','KASSA: Daxil olan cəmi','KASSA: Provayderə ödənilən','KASSA: Digər xərclər','KASSA: Çıxış cəmi','KASSA: Pul axını',
+       'MƏNFƏƏT: Abunə gəliri (xidmət aylarına bölünmüş)','MƏNFƏƏT: Gəlir cəmi','MƏNFƏƏT: Provayder xərci (bölünmüş)','MƏNFƏƏT: Ümumi mənfəət','MƏNFƏƏT: Xalis nəticə']];
+    function line(lbl,m){ return [lbl,n2(m.sub_income),n2(m.install_income),n2(m.other_income),n2(m.revenue),n2(m.provider_cash),n2(m.op_expenses),n2(m.cash_out),n2(m.cash_flow),
+      n2(v2?m.sub_revenue:m.sub_income),n2(acc(m)),n2(m.provider_alloc),n2(m.gross_profit),n2(m.net_operating)]; }
+    (R.months||[]).forEach(function(m){ rows.push(line(m.month,m)); });
+    rows.push(line('CƏMİ',T));
+    rows.push([]);
+    if(v2) rows.push(['Müştərilərin qabaqcadan ödədiyi (gələcək aylara aid)',n2(R.deferred_revenue)]);
+    rows.push(['Provayderə qabaqcadan ödənilmiş qalıq',n2(R.prepaid_remaining)]);
     rows.push([]); rows.push(['Partnyor','Aldığı','Ödədiyi']); (R.partners||[]).forEach(function(p){ rows.push([p.partner||'(göstərilməyib)',p.collected,p.paid]); });
     rows.push([]); rows.push(['Tarix','Növ','Təsvir','Üsul','Partnyor','AZN','Ləğv']);
     items.forEach(function(i){ rows.push([i.iso? String(i.iso).slice(0,10):'',i.t,i.who,i.m?METHOD[i.m]||i.m:'',i.p||'',(i.sign>0?'':'-')+i.amt.toFixed(2),i.voided?'ləğv: '+(i.vr||''):'']); });
@@ -1542,17 +1873,23 @@ async function loadPayments(id){
   var el=document.getElementById('pays'); if(!el || current!==id) return;
   if(r.error){ el.textContent=errText(r.error); return; }
   if(!r.data.length){ el.textContent='Ödəniş yoxdur.'; return; }
-  var total=r.data.reduce(function(s,p){ return s+(Number(p.amount)||0); },0);
-  el.innerHTML=r.data.map(function(p,i){
+  var dev=devices.find(function(x){ return x.id===id; }), arch=!!(dev && dev.archived_at);
+  var live=r.data.filter(function(p){ return !p.voided_at; });
+  var undoId=(!arch && live.length) ? live[0].id : null;   /* yalnız son (geri alınmamış) ödəniş geri alına bilər */
+  var total=live.reduce(function(s,p){ return s+Math.round((Number(p.amount)||0)*100); },0)/100;
+  el.innerHTML=r.data.map(function(p){
     var per=p.months ? p.months+' ay' : p.days+' gün';
     var to=p.new_expires ? ' → '+lastDayShort(Date.parse(p.new_expires)) : '';
-    return '<div class="payh"><div>'+esc(fmtDT(p.created_at))+' · '+esc(per)+esc(to)+(p.note?' <span class="m">· '+esc(p.note)+'</span>':'')+
-      ((p.method||p.received_by)?' <span class="m">· '+esc([METHOD[p.method]||p.method, p.received_by].filter(Boolean).join(' · '))+'</span>':'')+'</div>'+
-      '<div style="white-space:nowrap">'+(p.amount!=null?esc(Number(p.amount).toFixed(2))+' ₼':'—')+(i===0?'<button class="undo" data-u="'+p.id+'">Geri al</button>':'')+'</div></div>';
-  }).join('')+'<div class="payh"><div class="m">Cəmi</div><div><b>'+total.toFixed(2)+' ₼</b></div></div>';
+    var v=!!p.voided_at;
+    return '<div class="payh'+(v?' void':'')+'"><div>'+(v?'<s>':'')+esc(fmtDT(p.created_at))+' · '+esc(per)+esc(to)+(v?'</s> <span class="m">· geri alınıb'+(p.voided_at?' '+esc(fmtDT(p.voided_at)):'')+'</span>':'')+
+      (p.note?' <span class="m">· '+esc(p.note)+'</span>':'')+
+      ((p.method||p.received_by)?' <span class="m">· '+esc([METHOD[p.method]||p.method, p.received_by].filter(Boolean).join(' · '))+'</span>':'')+
+      (p.override_reason?' <span class="m">· fərqli məbləğ'+(p.expected_amount!=null?' (tarif '+esc(Number(p.expected_amount).toFixed(2))+' ₼)':'')+': '+esc(p.override_reason)+'</span>':'')+'</div>'+
+      '<div style="white-space:nowrap">'+(v?'<s>':'')+(p.amount!=null?esc(Number(p.amount).toFixed(2))+' ₼':'—')+(v?'</s>':'')+(p.id===undoId?'<button class="undo" data-u="'+p.id+'">Geri al</button>':'')+'</div></div>';
+  }).join('')+'<div class="payh"><div class="m">Cəmi'+(live.length<r.data.length?' (geri alınanlar sayılmır)':'')+'</div><div><b>'+total.toFixed(2)+' ₼</b></div></div>';
   var u=el.querySelector('[data-u]');
   if(u) u.onclick=guard(async function(){
-    if(!confirm('Son ödəniş geri alınsın? Bitmə tarixi əvvəlki vəziyyətə qayıdacaq.')) return 'skip';
+    if(!confirm('Son ödəniş geri alınsın? Bitmə tarixi əvvəlki vəziyyətə qayıdacaq.\n\nÖdəniş silinmir — tarixçədə "geri alınıb" kimi qalır və hesabatlara düşmür.')) return 'skip';
     var r2=await sb.rpc('undo_payment',{ p_payment_id:+u.getAttribute('data-u') }); if(r2.error) throw r2.error;
     toast('Ödəniş geri alındı');
   });
