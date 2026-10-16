@@ -169,6 +169,19 @@ header .t small{color:var(--muted);font-size:12px}
   .toast{bottom:84px!important}
 }
 @media (min-width:1000px){ #more{display:none!important} }
+/* ===== v2.10: baxış statistikası ===== */
+.wchart{margin-top:10px}
+.wbars{display:flex;align-items:flex-end;gap:2px;height:96px;border-bottom:1px solid var(--line);position:relative}
+.wbars i{flex:1 1 0;min-width:2px;background:var(--accent);border-radius:4px 4px 0 0;opacity:.85;position:relative}
+.wbars i.z{background:var(--line);height:2px!important;border-radius:0;opacity:1}
+.wbars i:hover{opacity:1;outline:2px solid rgba(255,255,255,.25)}
+.wbars i:hover::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;background:#0b0e1a;border:1px solid var(--line);color:var(--text);font-size:11px;padding:4px 7px;border-radius:6px;z-index:3;pointer-events:none}
+.waxis{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+.wmax{position:absolute;top:-2px;left:0;font-size:11px;color:var(--muted);border-bottom:1px dashed var(--line);width:100%;pointer-events:none}
+.wch{display:grid;grid-template-columns:minmax(90px,1.2fr) 2fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.wch .bar{height:8px;border-radius:0 4px 4px 0;background:var(--accent);opacity:.85;min-width:2px}
+.wch .v{color:var(--muted);white-space:nowrap;text-align:right}
+.wtab td.r{white-space:nowrap}
 /* ===== v2.8.1 layout: menu + content ===== */
 [hidden]{display:none!important}
 .row .pay-btn{width:112px}
@@ -426,7 +439,7 @@ function renderMain(){
       '<nav class="nav">'+
         nv('nvc','users','Müştərilər',true)+nv('iptvb','tv','IPTV')+nv('finb','wallet','Maliyyə')+nv('rep','chart','Aylıq hesabat',false,'more-only')+
         '<div class="nvsep">Sistem</div>'+
-        nv('upd','upload','Tətbiq yeniləməsi',false,'more-only')+nv('cfgr','gear','Ayarlar',false,'more-only')+nv('act','history','Fəaliyyət tarixçəsi',false,'more-only')+nv('errs','alert','Sistem xətaları',false,'more-only')+
+        nv('upd','upload','Tətbiq yeniləməsi',false,'more-only')+nv('cfgr','gear','Ayarlar',false,'more-only')+nv('wst','chart','Baxış statistikası',false,'more-only')+nv('act','history','Fəaliyyət tarixçəsi',false,'more-only')+nv('errs','alert','Sistem xətaları',false,'more-only')+
         nv('more','menu','Daha çox')+
       '</nav></aside>'+
     '<div class="mainc">'+
@@ -443,7 +456,7 @@ function renderMain(){
   document.getElementById('nvc').onclick=function(){ closeSheet(); current=null; window.scrollTo(0,0); };
   document.getElementById('more').onclick=function(){
     var bg=sheet('more');
-    var items=[['rep','chart','Aylıq hesabat — kim ödəyib, kim yox'],['upd','upload','Tətbiq yeniləməsi (APK)'],['cfgr','gear','Ayarlar — qeydiyyat, təmizləmə, IPTV rejimi'],['act','history','Fəaliyyət tarixçəsi'],['errs','alert','Sistem xətaları'],['lo','out','Çıxış']];
+    var items=[['rep','chart','Aylıq hesabat — kim ödəyib, kim yox'],['wst','chart','Baxış statistikası — kim nə qədər baxır'],['upd','upload','Tətbiq yeniləməsi (APK)'],['cfgr','gear','Ayarlar — qeydiyyat, təmizləmə, IPTV rejimi'],['act','history','Fəaliyyət tarixçəsi'],['errs','alert','Sistem xətaları'],['lo','out','Çıxış']];
     bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Daha çox</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div><div class="morelist">'+
       items.map(function(i){ return '<button class="btn" data-go="'+i[0]+'">'+ICON[i[1]]+'<span>'+i[2]+'</span></button>'; }).join('')+'</div></div>';
     bg.querySelector('#x').onclick=closeSheet;
@@ -452,6 +465,7 @@ function renderMain(){
   document.getElementById('rf').onclick=load;
   document.getElementById('rep').onclick=openReport;
   document.getElementById('upd').onclick=openRelease;
+  document.getElementById('wst').onclick=function(){ openWatch(); };
   document.getElementById('act').onclick=function(){ openActivity(); };
   document.getElementById('errs').onclick=openErrors;
   document.getElementById('cfgr').onclick=openSettings;
@@ -468,13 +482,14 @@ async function load(){
   devices = r.data || [];
   if(!settingsCache) await loadSettingsCache();
   await loadIptv();
+  try { await loadWatchIdle(); } catch(e){ watchByDev=null; }
   renderList();
   if(current && document.querySelector('.sheet-bg[data-kind="device"]')) openDevice(current);
 }
 
 function counts(){
-  var c={ all:0, active:0, pending:0, expired:0, blocked:0, due:0, noiptv:0, archived:0 };
-  devices.forEach(function(d){ var s=statusOf(d); c[s]++; if(s==='archived') return; c.all++; if(isDue(d)) c.due++; if(iptv && s==='active' && !d.replaced_by && !iptvByDev[d.id]) c.noiptv++; });
+  var c={ all:0, active:0, pending:0, expired:0, blocked:0, due:0, noiptv:0, archived:0, idle:0 };
+  devices.forEach(function(d){ var s=statusOf(d); c[s]++; if(s==='archived') return; c.all++; if(isDue(d)) c.due++; if(isIdle(d)) c.idle++; if(iptv && s==='active' && !d.replaced_by && !iptvByDev[d.id]) c.noiptv++; });
   return c;
 }
 function matches(d){
@@ -482,6 +497,7 @@ function matches(d){
   if(filter==='archived'){ if(!arch) return false; }
   else if(arch) return false;
   else if(filter==='due'){ if(!isDue(d)) return false; }
+  else if(filter==='idle'){ if(!isIdle(d)) return false; }
   else if(filter==='noiptv'){ if(!(statusOf(d)==='active' && !d.replaced_by && !iptvByDev[d.id])) return false; }
   else if(filter!=='all' && statusOf(d)!==filter) return false;
   if(!query) return true;
@@ -501,6 +517,7 @@ function renderList(){
     stat(c.active,'Aktiv')+stat(c.pending,'Yeni')+stat(c.expired,'Bitib')+stat(c.blocked,'Bloklu');
   var chips=[['all','Hamısı',''],['due','Ödəniş gözlənilir','wait'],['active','Aktiv','ok'],['pending','Yeni','new'],['expired','Bitib','warn'],['blocked','Bloklu','bad']];
   if(iptv) chips.push(['noiptv','IPTV-siz','']);
+  if(watchByDev) chips.push(['idle','14 gündür baxmır','warn']);
   if(c.archived || filter==='archived') chips.push(['archived','Arxiv','arch']);
   /* the counters ARE the filters (no duplicate number boxes) */
   chips=chips.filter(function(x){ return x[0]==='all' || x[0]===filter || c[x[0]]>0; });   /* v2.9.1: 0 olan filtrlər gizlənir */
@@ -544,7 +561,7 @@ var TABS={
   device:[['Ödəniş',/Ödəniş alındı|^Aktivləşdir/],['Müştəri',/^Müştəri$|Müştəriyə mesaj/],['IPTV',/IPTV xidməti/],['Cihaz',/Cihaz məlumatı|Quraşdırma və cihaz|Quraşdırıcı kodu/],['Tarixçə',/tarixçəsi/],['Əlavə',/^Əlavə$/]],
   account:[['Yerlər',/^Yerlər/],['Playlist',/Playlist məlumatı/],['Paketlər',/Paketlər/],['Tarixçə',/^Tarixçə/],['Əlavə',/^Əlavə$/]],
   finance:[['Xülasə',/Aylar üzrə/],['Qeydlər',/Yeni gəlir|Bu dövrün qeydləri/],['Partnyorlar',/Partnyorlar/],['Ayarlar',/^Ayarlar$/]],
-  settings:[['Qeydiyyat',/Yeni cihaz qeydiyyatı|Limitlər/],['Təmizləmə',/Köhnə gözləyən/],['IPTV rejimi',/2 müştəri/]]
+  settings:[['Qeydiyyat',/Yeni cihaz qeydiyyatı|Limitlər/],['Təmizləmə',/Köhnə gözləyən/],['Statistika',/Baxış statistikası/],['IPTV rejimi',/2 müştəri/]]
 };
 var tabSel={}, tabBusy=false;
 function tabify(bg){
@@ -778,6 +795,7 @@ function openDevice(id){
       '<div id="icbox" class="hint" style="margin-top:0">'+instCodeHtml(d)+'</div>'+
       '<button class="btn primary block" id="ic">Quraşdırıcı kodu yarat</button></div>'+
 
+    '<div class="sec"><h3>Baxış tarixçəsi</h3><div id="wdev" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
     '<div class="sec"><h3>Ödəniş tarixçəsi</h3><div id="pays" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
     '<div class="sec"><h3>Fəaliyyət tarixçəsi</h3><div id="dlog" class="hint" style="margin-top:0">Yüklənir…</div></div>'+
 
@@ -856,8 +874,45 @@ function openDevice(id){
     current=null; closeSheet(); toast('Silindi');
   });
   loadPayments(d.id);
+  loadDeviceWatch(d.id);
   loadDeviceLog(d.id);
   if('installed_on' in d) wireDeviceV28(bg, d);
+}
+
+/* ---- v2.10: Baxış statistikası ---- */
+var wRange=7;
+async function openWatch(){
+  var bg=sheet('watch');
+  bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Baxış statistikası</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div><div id="wb" class="hint">Yüklənir…</div></div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  var to=todayStr(), from=addDaysStr(to,-(wRange-1));
+  var r=await sb.rpc('watch_overview',{ p_from:from, p_to:to });
+  var box=bg.querySelector('#wb'); if(!box) return;
+  if(r.error){ box.textContent=v28missing(r.error)?'Supabase-də v2.10.0 miqrasiyası işlədilməyib.':errText(r.error); return; }
+  var R=r.data, T=R.totals||{}, cust=R.customers||[];
+  var active=cust.length, viewers=cust.filter(function(c){ return +c.seconds>0; }).length;
+  var idle=cust.filter(function(c){ return !(+c.seconds>0); });
+  var avg=viewers ? (+T.seconds||0)/viewers/R.days : 0;
+  var chTot=+R.channels_total||0, chMax=(R.channels||[]).reduce(function(m,c){ return Math.max(m,+c.seconds); },0);
+  box.className='';
+  box.innerHTML=
+    '<div class="chips">'+[[1,'Bu gün'],[7,'7 gün'],[30,'30 gün'],[90,'90 gün']].map(function(x){ return '<button class="chip'+(wRange===x[0]?' on':'')+'" data-wr="'+x[0]+'">'+x[1]+'</button>'; }).join('')+'</div>'+
+    '<div class="subline" style="margin-top:6px">'+dshort(R.from)+' — '+dshort(R.to)+'</div>'+
+    (R.enabled===false?'<div class="alertline">Baxış statistikası söndürülüb — yeni məlumat toplanmır. Açmaq: Ayarlar → Statistika.</div>':'')+
+    '<div class="kpi"><div><b>'+hrs(T.seconds)+'</b><span>Ümumi baxış</span></div><div><b>'+viewers+' / '+active+'</b><span>Baxan aktiv müştəri</span></div><div><b>'+hrs(avg)+'</b><span>Gündə orta (bir müştəri)</span></div></div>'+
+    (R.days>1?'<div class="sec" style="border-top:0;margin-top:6px;padding-top:0"><h3>Günlər üzrə (saat)</h3>'+wbarsHtml((R.by_day||[]).map(function(x){ return { day:x.day, sec:+x.seconds||0 }; }))+'</div>':'')+
+    '<div class="sec"><h3>Ən çox baxılan kanallar</h3>'+((R.channels||[]).length? (R.channels||[]).slice(0,20).map(function(c,i){
+        var pct=chTot?Math.round(+c.seconds/chTot*100):0;
+        return '<div class="wch"><span>'+(i+1)+'. '+esc(c.channel)+'</span><span><span class="bar" style="display:block;width:'+Math.max(1,Math.round(+c.seconds/chMax*100))+'%"></span></span><span class="v">'+hrs(c.seconds)+' · '+pct+'%</span></div>'; }).join('')+
+      '<div class="hint">Ümumi statistikadır — hansı müştərinin hansı kanala baxdığı saxlanılmır.</div>'
+      : '<div class="hint" style="margin-top:0">Bu dövrdə kanal statistikası yoxdur.</div>')+'</div>'+
+    '<div class="sec"><h3>Müştərilər (aktiv)</h3>'+(active?'<table class="rep-tab wtab"><tr><td class="m">Müştəri</td><td class="r m">Baxış</td><td class="r m">Gün</td><td class="r m">Son baxış</td></tr>'+
+      cust.map(function(c){ return '<tr data-wdev="'+esc(c.device_id)+'" style="cursor:pointer"><td>#'+esc(c.customer_no)+(c.customer_name?' · '+esc(c.customer_name):'')+'</td><td class="r">'+(+c.seconds?hrs(c.seconds):'<span style="color:var(--warn)">0</span>')+'</td><td class="r">'+(c.days_watched||0)+'</td><td class="r">'+(c.last_day?dshort(c.last_day):'—')+'</td></tr>'; }).join('')+'</table>'
+      :'<div class="hint" style="margin-top:0">Aktiv müştəri yoxdur.</div>')+
+      (idle.length?'<div class="hint">Bu dövrdə heç baxmayan aktiv müştəri: <b>'+idle.length+'</b> — zəng edib soruşmaq olar (TV işləyirmi?).</div>':'')+'</div>'+
+    '<div class="hint">Yalnız tətbiqin 2.8.5 və yeni versiyası olan TV-lər sayılır. Ekranda həqiqətən oynayan vaxt sayılır (pauza, yüklənmə, arxa fon sayılmır).</div>';
+  box.querySelectorAll('[data-wr]').forEach(function(b){ b.onclick=function(){ wRange=+b.getAttribute('data-wr'); openWatch(); }; });
+  box.querySelectorAll('[data-wdev]').forEach(function(tr){ tr.onclick=function(){ openDevice(tr.getAttribute('data-wdev')); }; });
 }
 
 /* ---- Aylıq hesabat ---- */
@@ -1184,11 +1239,20 @@ async function openSettings(){
       '<div><label>Pəncərədə (10 dəq)</label><input id="lwin" type="number" min="1" max="2000" value="'+s.reg_window_limit+'"></div>'+
       '<div><label>Xəta kvotası (gündə/cihaz)</label><input id="lerr" type="number" min="0" max="1000" value="'+s.err_daily_quota+'"></div></div>'+
       '<button class="btn block" id="lsv">Limitləri yadda saxla</button><div class="hint">Normalda dəyişmək lazım deyil. Mövcud müştərilərə təsir etmir.</div></details></div>'+
+    ('watch_stats_enabled' in s ? '<div class="sec"><h3>Baxış statistikası</h3>'+
+      (s.watch_stats_enabled
+        ? '<div class="subline" style="margin-top:0"><b style="color:var(--ok)">Açıqdır.</b> TV-lər gündə nə qədər baxıldığını (və adsız kanal statistikasını) göndərir.</div><button class="btn block" id="wsoff">Söndür</button>'
+        : '<div class="subline" style="margin-top:0"><b style="color:var(--warn)">Sönülüdür.</b> Yeni məlumat toplanmır, əvvəlki statistika qalır.</div><button class="btn primary block" id="wson">Aç</button>')+
+      '<div class="hint">Müştərilərə abunə qaydalarında bildirin: "Xidmətin keyfiyyəti üçün baxış müddəti (saat) qeydə alınır." Link, login, parol göndərilmir.</div></div>' : '')+
     '<div class="sec"><h3>Köhnə gözləyən qeydlər</h3>'+
       '<label>Neçə gün aktivləşdirilməyən boş qeydlər təmizlənsin</label><input id="cdays" type="number" min="7" max="365" value="'+s.pending_cleanup_days+'">'+
       '<div class="hint">Yalnız heç vaxt aktivləşdirilməmiş, adı və ödənişi olmayan boş qeydlər. Müştərilər heç vaxt silinmir.</div>'+
       '<button class="btn block" id="cprev">Yoxla (heç nə silinmir)</button><div id="cres"></div></div>'+resaleHtml(s);
   wireResale(box);
+  [['#wson',true],['#wsoff',false]].forEach(function(x){ var b=box.querySelector(x[0]); if(b) b.onclick=guard(async function(){
+    if(!x[1] && !confirm('Baxış statistikası söndürülsün? Yeni məlumat toplanmayacaq (əvvəlki qalır).')) return 'skip';
+    var w=await sb.from('app_settings').update({ watch_stats_enabled:x[1] }).eq('id',1); if(w.error) throw w.error;
+    await loadSettingsCache(); toast(x[1]?'Baxış statistikası açıldı':'Baxış statistikası söndürüldü'); openSettings(); return 'skip'; }); });
   box.querySelectorAll('[data-w]').forEach(function(b){ b.onclick=guard(async function(){
     var m=+b.getAttribute('data-w');
     var w=await sb.from('app_settings').update({ reg_window_until: m ? new Date(Date.now()+m*60000).toISOString() : null }).eq('id',1);
@@ -1237,6 +1301,24 @@ var CURR=['AZN','USD','EUR','TRY','RUB','GBP'];
 function confirmWord(t){ var u=String(t||'').trim().toUpperCase().replace(/İ/g,'I'); return (u==='TƏSDIQ'||u==='TESDIQ') ? 'TƏSDİQ' : u; }
 function money(n){ n=Number(n)||0; return n.toFixed(2)+' ₼'; }
 function dshort(iso){ if(!iso) return '—'; var p=String(iso).slice(0,10).split('-'); return +p[2]+' '+AYLAR[+p[1]-1].slice(0,3)+' '+p[0]; }
+function hrs(sec){ sec=Math.round(+sec||0); if(sec<60) return sec?'<1 dəq':'0'; if(sec<3600) return Math.round(sec/60)+' dəq'; var h=sec/3600; return (h<10?h.toFixed(1):Math.round(h))+' saat'; }
+/* single-series daily bar chart (hours); rows: [{day, sec}] */
+function wbarsHtml(rows){
+  var max=0; rows.forEach(function(r){ if(r.sec>max) max=r.sec; });
+  if(!max) return '<div class="hint" style="margin-top:6px">Bu dövrdə baxış qeydə alınmayıb.</div>';
+  return '<div class="wchart"><div class="wbars"><span class="wmax">'+hrs(max)+'</span>'+rows.map(function(r){
+      var h=Math.max(2,Math.round(r.sec/max*92));
+      return '<i'+(r.sec?'':' class="z"')+' style="height:'+h+'px" data-t="'+esc(dshort(r.day).replace(/ \d{4}$/,'')+': '+hrs(r.sec))+'"></i>'; }).join('')+
+    '</div><div class="waxis"><span>'+esc(dshort(rows[0].day))+'</span><span>'+esc(dshort(rows[rows.length-1].day))+'</span></div></div>';
+}
+function dayRange(from, to){ var out=[], d=from; while(d<=to){ out.push(d); d=addDaysStr(d,1); } return out; }
+var watchByDev=null;   /* device_id → {sec, last} for the last 14 days (v2.10) */
+async function loadWatchIdle(){
+  var to=todayStr(), r=await sb.rpc('watch_overview',{ p_from:addDaysStr(to,-13), p_to:to });
+  if(r.error || !r.data || r.data.enabled===false){ watchByDev=null; return; }
+  watchByDev={}; (r.data.customers||[]).forEach(function(c){ watchByDev[c.device_id]={ sec:+c.seconds||0, last:c.last_day }; });
+}
+function isIdle(d){ return !!watchByDev && statusOf(d)==='active' && !d.replaced_by && !(watchByDev[d.id] && watchByDev[d.id].sec>0); }
 function todayStr(){ var p=bk(Date.now()); return p.y+'-'+pad(p.m+1)+'-'+pad(p.d); }
 function addDaysStr(s, n){ var d=new Date(s+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
 function addMonthsStr(s, n){ var d=new Date(s+'T00:00:00Z'), day=d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth()+n); var dim=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).getUTCDate(); d.setUTCDate(Math.min(day,dim)); return d.toISOString().slice(0,10); }
@@ -1867,6 +1949,27 @@ function guard(fn){
   };
 }
 async function upd(id, patch){ var r=await sb.from('devices').update(patch).eq('id',id); if(r.error) throw r.error; }
+
+async function loadDeviceWatch(id){
+  var to=todayStr(), from=addDaysStr(to,-29);
+  var r;
+  try { r=await sb.from('watch_daily').select('*').eq('device_id',id).gte('day',from).order('day',{ascending:true}).limit(60); }
+  catch(e){ r={ error:{ message:String((e&&e.message)||e) } }; }
+  var el=document.getElementById('wdev'); if(!el || current!==id) return;
+  if(r.error){ el.textContent=/watch_daily|does not exist|schema cache/.test(r.error.message||'')?'Baxış statistikası üçün Supabase-də v2.10.0 miqrasiyası işlədilməlidir.':errText(r.error); return; }
+  var by={}; (r.data||[]).forEach(function(x){ by[String(x.day).slice(0,10)]=(+x.live_seconds||0)+(+x.vod_seconds||0); });
+  var rows=dayRange(from,to).map(function(d){ return { day:d, sec:by[d]||0 }; });
+  function sum(n){ return rows.slice(-n).reduce(function(a,x){ return a+x.sec; },0); }
+  var last=null; rows.forEach(function(x){ if(x.sec) last=x.day; });
+  var live=0, vod=0; (r.data||[]).forEach(function(x){ live+=+x.live_seconds||0; vod+=+x.vod_seconds||0; });
+  var off=settingsCache && settingsCache.watch_stats_enabled===false;
+  el.className='';
+  el.innerHTML=(off?'<div class="alertline" style="margin-top:0">Baxış statistikası söndürülüb (Ayarlar). Yeni məlumat toplanmır.</div>':'')+
+    '<div class="subline" style="margin-top:0">Bu gün <b>'+hrs(sum(1))+'</b> · son 7 gün <b>'+hrs(sum(7))+'</b> · son 30 gün <b>'+hrs(sum(30))+'</b>'+
+      (live+vod?' (kanal '+hrs(live)+', film/serial '+hrs(vod)+')':'')+'<br>Son baxış: <b>'+(last?(last===to?'bu gün':dshort(last)):'son 30 gündə yoxdur')+'</b></div>'+
+    wbarsHtml(rows)+
+    '<div class="hint">Yalnız ekranda həqiqətən oynayan vaxt sayılır. Tətbiq 2.8.5 və yenisi lazımdır.</div>';
+}
 
 async function loadPayments(id){
   var r=await sb.from('payments').select('*').eq('device_id',id).order('id',{ascending:false}).limit(60);
