@@ -76,6 +76,12 @@ header .t small{color:var(--muted);font-size:12px}
 .pill.warn{background:rgba(255,159,67,.15);color:var(--warn)}
 .pill.bad{background:rgba(255,92,92,.15);color:var(--bad)}
 .pill.arch{background:rgba(142,151,184,.15);color:var(--muted)}
+.pill.test{background:rgba(124,140,255,.18);color:#9fb0ff}
+.c-pf{font-size:11px;color:var(--muted)}
+.codebig{font:700 30px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;text-align:center;padding:14px;border-radius:12px;background:rgba(124,140,255,.12);margin:8px 0;user-select:all}
+.acrow{border:1px solid var(--line,rgba(255,255,255,.1));border-radius:12px;padding:10px 12px;margin:8px 0}
+.acrow .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.acrow .m{font-size:12px;color:var(--muted);margin-top:4px}
 .payh.void{opacity:.55}
 .archbox{margin:12px 0 0;padding:12px;border-radius:10px;background:rgba(142,151,184,.08);border:1px solid rgba(142,151,184,.35);font-size:13px;line-height:1.5}
 .empty{text-align:center;color:var(--muted);padding:40px 10px;line-height:1.5}
@@ -291,6 +297,7 @@ var ICON = {
   alert:'<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/></svg>',
   upload:'<svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></svg>',
   menu:'<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  key:'<svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg>',
   history:'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 8v4l3 2"/></svg>',
   gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
@@ -366,7 +373,10 @@ function ago(iso){
 }
 
 function statusOf(d){ if(d.archived_at) return 'archived'; if(d.blocked) return 'blocked'; if(!d.expires_at) return 'pending'; return Date.parse(d.expires_at) <= Date.now() ? 'expired' : 'active'; }
-function isDue(d){ return !d.archived_at && !!d.expires_at && Date.parse(d.expires_at) <= upcomingBoundary(); }
+function isDue(d){ return !d.archived_at && !d.is_test && !!d.expires_at && Date.parse(d.expires_at) <= upcomingBoundary(); }
+/* v2.11: which build the TV runs (sent by the app as "platform") */
+function pfLabel(p){ return ({ tv:'TV', phone:'Telefon', 'play-tv':'TV · Google Play', 'play-phone':'Telefon · Google Play', tizen:'Samsung TV' })[p] || ''; }
+function pfShort(p){ return p==='play-tv'||p==='play-phone' ? 'Play' : p==='tizen' ? 'Samsung' : ''; }
 function label(d){ return '#'+(d.customer_no||'—') + (d.customer_name ? ' · '+d.customer_name : ''); }
 
 function toast(msg, opts){
@@ -439,7 +449,7 @@ function renderMain(){
       '<nav class="nav">'+
         nv('nvc','users','Müştərilər',true)+nv('iptvb','tv','IPTV')+nv('finb','wallet','Maliyyə')+nv('rep','chart','Aylıq hesabat',false,'more-only')+
         '<div class="nvsep">Sistem</div>'+
-        nv('upd','upload','Tətbiq yeniləməsi',false,'more-only')+nv('cfgr','gear','Ayarlar',false,'more-only')+nv('wst','chart','Baxış statistikası',false,'more-only')+nv('act','history','Fəaliyyət tarixçəsi',false,'more-only')+nv('errs','alert','Sistem xətaları',false,'more-only')+
+        nv('upd','upload','Tətbiq yeniləməsi',false,'more-only')+nv('cfgr','gear','Ayarlar',false,'more-only')+nv('wst','chart','Baxış statistikası',false,'more-only')+nv('acd','key','Aktivləşdirmə kodları',false,'more-only')+nv('act','history','Fəaliyyət tarixçəsi',false,'more-only')+nv('errs','alert','Sistem xətaları',false,'more-only')+
         nv('more','menu','Daha çox')+
       '</nav></aside>'+
     '<div class="mainc">'+
@@ -456,7 +466,7 @@ function renderMain(){
   document.getElementById('nvc').onclick=function(){ closeSheet(); current=null; window.scrollTo(0,0); };
   document.getElementById('more').onclick=function(){
     var bg=sheet('more');
-    var items=[['rep','chart','Aylıq hesabat — kim ödəyib, kim yox'],['wst','chart','Baxış statistikası — kim nə qədər baxır'],['upd','upload','Tətbiq yeniləməsi (APK)'],['cfgr','gear','Ayarlar — qeydiyyat, təmizləmə, IPTV rejimi'],['act','history','Fəaliyyət tarixçəsi'],['errs','alert','Sistem xətaları'],['lo','out','Çıxış']];
+    var items=[['rep','chart','Aylıq hesabat — kim ödəyib, kim yox'],['wst','chart','Baxış statistikası — kim nə qədər baxır'],['acd','key','Aktivləşdirmə kodları — satış və mağaza yoxlayıcısı'],['upd','upload','Tətbiq yeniləməsi (APK)'],['cfgr','gear','Ayarlar — qeydiyyat, təmizləmə, IPTV rejimi'],['act','history','Fəaliyyət tarixçəsi'],['errs','alert','Sistem xətaları'],['lo','out','Çıxış']];
     bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Daha çox</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div><div class="morelist">'+
       items.map(function(i){ return '<button class="btn" data-go="'+i[0]+'">'+ICON[i[1]]+'<span>'+i[2]+'</span></button>'; }).join('')+'</div></div>';
     bg.querySelector('#x').onclick=closeSheet;
@@ -466,6 +476,7 @@ function renderMain(){
   document.getElementById('rep').onclick=openReport;
   document.getElementById('upd').onclick=openRelease;
   document.getElementById('wst').onclick=function(){ openWatch(); };
+  document.getElementById('acd').onclick=function(){ openCodes(); };
   document.getElementById('act').onclick=function(){ openActivity(); };
   document.getElementById('errs').onclick=openErrors;
   document.getElementById('cfgr').onclick=openSettings;
@@ -488,8 +499,8 @@ async function load(){
 }
 
 function counts(){
-  var c={ all:0, active:0, pending:0, expired:0, blocked:0, due:0, noiptv:0, archived:0, idle:0 };
-  devices.forEach(function(d){ var s=statusOf(d); c[s]++; if(s==='archived') return; c.all++; if(isDue(d)) c.due++; if(isIdle(d)) c.idle++; if(iptv && s==='active' && !d.replaced_by && !iptvByDev[d.id]) c.noiptv++; });
+  var c={ all:0, active:0, pending:0, expired:0, blocked:0, due:0, noiptv:0, archived:0, idle:0, test:0 };
+  devices.forEach(function(d){ var s=statusOf(d); c[s]++; if(s==='archived') return; c.all++; if(d.is_test) c.test++; if(isDue(d)) c.due++; if(isIdle(d)) c.idle++; if(iptv && s==='active' && !d.replaced_by && !iptvByDev[d.id]) c.noiptv++; });
   return c;
 }
 function matches(d){
@@ -498,6 +509,7 @@ function matches(d){
   else if(arch) return false;
   else if(filter==='due'){ if(!isDue(d)) return false; }
   else if(filter==='idle'){ if(!isIdle(d)) return false; }
+  else if(filter==='test'){ if(!d.is_test) return false; }
   else if(filter==='noiptv'){ if(!(statusOf(d)==='active' && !d.replaced_by && !iptvByDev[d.id])) return false; }
   else if(filter!=='all' && statusOf(d)!==filter) return false;
   if(!query) return true;
@@ -519,6 +531,7 @@ function renderList(){
   if(iptv) chips.push(['noiptv','IPTV-siz','']);
   if(watchByDev) chips.push(['idle','14 gündür baxmır','warn']);
   if(c.archived || filter==='archived') chips.push(['archived','Arxiv','arch']);
+  if(c.test || filter==='test') chips.push(['test','Test cihazları','']);
   /* the counters ARE the filters (no duplicate number boxes) */
   chips=chips.filter(function(x){ return x[0]==='all' || x[0]===filter || c[x[0]]>0; });   /* v2.9.1: 0 olan filtrlər gizlənir */
   document.getElementById('chips').innerHTML = chips.map(function(x){
@@ -542,11 +555,11 @@ function renderList(){
     var ip=iptvByDev[d.id];
     return '<div class="row'+(d.customer_name?' named':'')+'">'+
       '<div class="main" data-open="'+d.id+'">'+
-        '<div class="l1"><span class="no">#'+esc(d.customer_no)+'</span><span class="nm'+(d.customer_name?'':' noname')+'">'+esc(d.customer_name||'Adsız')+'</span><span class="pill '+st[1]+'">'+st[0]+'</span></div>'+
+        '<div class="l1"><span class="no">#'+esc(d.customer_no)+'</span><span class="nm'+(d.customer_name?'':' noname')+'">'+esc(d.customer_name||'Adsız')+'</span><span class="pill '+st[1]+'">'+st[0]+'</span>'+(d.is_test?'<span class="pill test">Test</span>':'')+'</div>'+
         '<div class="l2"><span class="c-until">'+esc(until)+'</span>'+
           '<span class="c-ph">'+(d.phone?esc(d.phone):'')+'</span>'+
           '<span class="c-ip">'+(ip?'📡 '+esc(ip.acc.label||ip.acc.subuser)+'/'+ip.slot.slot:'')+'</span>'+
-          '<span class="c-mac mono">'+esc(d.mac)+'</span></div>'+
+          '<span class="c-mac mono">'+esc(d.mac)+'</span>'+(pfShort(d.platform)?'<span class="c-pf">'+pfShort(d.platform)+'</span>':'')+'</div>'+
       '</div>'+btn+'</div>';
   }).join('');
   list.querySelectorAll('[data-open]').forEach(function(el){ el.onclick=function(){ openDevice(el.getAttribute('data-open')); }; });
@@ -614,7 +627,7 @@ function sheet(kind){
   return bg;
 }
 /* menu highlight follows the open window */
-var NAVK={iptv:'iptvb',account:'iptvb',finance:'finb',report:'rep',errors:'errs',release:'upd',activity:'act',settings:'cfgr'};
+var NAVK={iptv:'iptvb',account:'iptvb',finance:'finb',report:'rep',errors:'errs',release:'upd',activity:'act',settings:'cfgr',codes:'acd'};
 function navMark(kind){ document.querySelectorAll('.nv').forEach(function(b){ b.classList.toggle('on', b.id===(NAVK[kind]||'nvc')); }); }
 function closeSheet(){
   var bg=document.querySelector('.sheet-bg'); if(bg) bg.remove();
@@ -757,7 +770,7 @@ function openDevice(id){
   if(d.expires_at){ var p=bk(Date.parse(d.expires_at)-1); dateVal=p.y+'-'+pad(p.m+1)+'-'+pad(p.d); }
 
   bg.innerHTML='<div class="sheet" role="dialog" aria-modal="true">'+
-    '<div class="top"><div class="grow"><span class="pill '+st[1]+'">'+st[0]+'</span><h2>'+esc(label(d))+'</h2></div>'+
+    '<div class="top"><div class="grow"><span class="pill '+st[1]+'">'+st[0]+'</span>'+(d.is_test?' <span class="pill test">Test cihazı</span>':'')+'<h2>'+esc(label(d))+'</h2></div>'+
       '<button class="icon-btn" id="x">'+ICON.close+'</button></div>'+
     (arch ? '<div class="archbox"><b>Arxivdədir</b> · '+esc(fmtDT(d.archived_at))+(d.archive_reason?' · '+esc(d.archive_reason):'')+
       '<br>Ödəniş və fəaliyyət tarixçəsi qorunur. TV-də xidmət dayandırılıb. Bərpa etmək üçün "Əlavə" bölməsində "Arxivdən çıxar".</div>' : '')+
@@ -765,7 +778,7 @@ function openDevice(id){
     '<div class="sec devinfo" hidden><h3>Cihaz məlumatı</h3><div class="kv">'+
       '<div><small>Son əlaqə</small>'+esc(ago(d.last_seen))+'</div>'+
       '<div><small>MAC</small><span class="mono">'+esc(d.mac)+'</span></div>'+
-      '<div><small>Cihaz · versiya</small>'+esc([d.platform==='tv'?'TV':d.platform==='phone'?'Telefon':'', d.model, d.app_version].filter(Boolean).join(' · ')||'—')+'</div>'+
+      '<div><small>Cihaz · versiya</small>'+esc([pfLabel(d.platform), d.model, d.app_version].filter(Boolean).join(' · ')||'—')+'</div>'+
       '<div><small>Ödəniş statusu</small>'+esc(payStatusText(d))+'</div>'+
       '<div><small>Quraşdırma</small>'+(d.installed_on?dshort(d.installed_on):'ilk qoşulma: '+fmtDT(d.first_seen).slice(0,10))+'</div>'+
     '</div></div>'+
@@ -806,6 +819,8 @@ function openDevice(id){
           '<div class="rowbtns"><button class="btn" id="rk">Açarı sıfırla</button><button class="btn" id="pr">Uşaq kilidi PIN-i sıfırla</button></div>'+
           '<div class="rowbtns"><button class="btn danger" id="del">Tamamilə sil</button></div>'+
           '<div class="hint">Tamamilə sil — yalnız heç bir ödənişi və IPTV tarixçəsi olmayan qeyd üçün mümkündür.</div>'+
+          ('is_test' in d ? '<div class="rowbtns"><button class="btn danger" id="anon">Şəxsi məlumatı sil (məxfilik tələbi)</button></div>'+
+            '<div class="hint">Müştəri məlumatının silinməsini istəyəndə: ad, telefon, qeyd, mesajlar, arxiv səbəbi və baxış statistikası silinir; ödəniş və maliyyə qeydlərindəki sərbəst mətnlər (qeyd, səbəb, təsvir) və fəaliyyət jurnalı təmizlənir. Məbləğ, tarix, üsul və pulu qəbul edən işçi mühasibat üçün qalır.</div>' : '')+
         '</div>'+
       '</div>' : '')+
       (arch ? '' : (d.blocked
@@ -817,6 +832,7 @@ function openDevice(id){
       (v29 ? '<div class="rowbtns"><button class="btn danger" id="arc">Müştərini arxivlə</button><button class="btn" id="del">Tamamilə sil</button></div>'+
         '<div class="hint">Arxivlə — xidmət dayanır, ödənişlər və tarixçə qalır, istənilən vaxt geri qaytarılır.</div>'
         : '<div class="rowbtns"><button class="btn danger" id="del">Müştərini sil</button></div>')+
+      ('is_test' in d ? '<div class="rowbtns"><button class="btn" id="tst">'+(d.is_test?'Test işarəsini götür':'Test cihazı kimi işarələ')+'</button></div>' : '')+
       '<div class="hint">Açarı sıfırla — ekranda "Cihaz açarı uyğun gəlmir" çıxanda. PIN-i sıfırla — uşaq kilidi PIN-i 0000 olur.'+(d.pin_reset_at?' Son: '+fmtDT(d.pin_reset_at):'')+'</div>'+
     '</div>'+
   '</div>');
@@ -873,10 +889,102 @@ function openDevice(id){
     var r=await sb.rpc('delete_customer',{ p_device_id:d.id }); if(r.error) throw r.error;
     current=null; closeSheet(); toast('Silindi');
   });
+  if($('#tst')) $('#tst').onclick=guard(async function(){
+    var on=!d.is_test;
+    if(on && !confirm(label(d)+' test cihazı kimi işarələnsin?\n\nTest cihazları (məs. Google / Samsung yoxlayıcısı) "Ödəniş gözlənilir" və "14 gündür baxmır" siyahılarına, maliyyə gözləntisinə düşmür.')) return 'skip';
+    var r=await sb.rpc('set_device_test',{ p_device_id:d.id, p_on:on }); if(r.error) throw r.error;
+    toast(on?'Test cihazı kimi işarələndi':'Test işarəsi götürüldü');
+  });
+  if($('#anon')) $('#anon').onclick=guard(async function(){
+    var a=prompt(label(d)+' — şəxsi məlumat silinsin?\n\nAd, telefon, qeyd, mesajlar, baxış statistikası və ödəniş/maliyyə qeydlərindəki sərbəst mətnlər silinəcək, fəaliyyət jurnalında təmizlənəcək. Bunu geri qaytarmaq olmur. Məbləğ və tarixlər qalır.\n\nTəsdiq üçün SİL yazın:','');
+    if(a===null) return 'skip'; if(a.trim().toUpperCase()!=='SİL' && a.trim().toUpperCase()!=='SIL'){ toast('Təsdiq yazılmadı — heç nə dəyişmədi',{bad:true}); return 'skip'; }
+    var r=await sb.rpc('anonymize_customer',{ p_device_id:d.id }); if(r.error) throw r.error;
+    toast('Şəxsi məlumat silindi');
+  });
   loadPayments(d.id);
   loadDeviceWatch(d.id);
   loadDeviceLog(d.id);
   if('installed_on' in d) wireDeviceV28(bg, d);
+}
+
+/* ---- v2.11: Aktivləşdirmə kodları ----
+   A code activates a TV for N days without sending the MAC to the seller. Used for sales and for
+   Google / Samsung reviewers (test codes + an authorized demo playlist). The code is shown ONCE. */
+function codeFmt(c){ return String(c).replace(/(\d{4})(\d{4})(\d{4})/,'$1-$2-$3'); }
+var AC_ST={ active:['Aktiv','ok'], used_up:['Limit dolub','warn'], expired:['Vaxtı bitib','arch'], revoked:['Ləğv edilib','bad'] };
+async function openCodes(fresh){
+  var bg=sheet('codes');
+  bg.innerHTML='<div class="sheet"><div class="top"><div class="grow"><h2>Aktivləşdirmə kodları</h2></div><button class="icon-btn" id="x">'+ICON.close+'</button></div>'+
+    '<div class="hint" style="margin-top:0">Müştəri TV-də "Aktivləşdirmə kodu" düyməsini basıb 12 rəqəmli kodu yazır — abunə dərhal açılır. Kod yalnız bir dəfə, yarananda göstərilir; bazada saxlanılmır.</div>'+
+    (fresh ? '<div class="sec"><h3>Yeni kod</h3><div class="codebig" id="newcode">'+esc(codeFmt(fresh.code))+'</div>'+
+      '<div class="rowbtns"><button class="btn primary" id="cpy">Kopyala</button></div>'+
+      '<div class="hint">Bu kodu indi yazın və ya kopyalayın — bu pəncərə bağlanandan sonra kodu yenidən görmək olmur (yalnız son 4 rəqəmi: '+esc(fresh.hint)+').</div></div>' : '')+
+    '<div class="sec"><h3>Yeni kod yarat</h3>'+
+      '<label>Ad (siyahıda və müştəri adı kimi görünür)</label><input id="aclb" maxlength="60" placeholder="məs. Google Play Review və ya Kampaniya oktyabr">'+
+      '<div class="grid2"><div><label>Abunə neçə gün açılsın</label><input id="acdays" type="number" min="1" max="400" value="31"></div>'+
+      '<div><label>Neçə TV-də işləsin</label><input id="acuses" type="number" min="1" max="500" value="1"></div></div>'+
+      '<label>Kod neçə gün etibarlı olsun</label><input id="acvalid" type="number" min="1" max="400" value="30">'+
+      '<label class="chk"><input type="checkbox" id="actest"> Test kodu (Google / Samsung yoxlayıcısı — cihaz "Test" işarələnir, ödəniş gözləntisinə düşmür)</label>'+
+      '<details><summary>Başlanğıc playlist (istəyə görə)</summary>'+
+        '<div class="hint">Kodla birlikdə TV-yə adi M3U linki kimi əlavə olunur. Yalnız <b>yayım hüququ olan</b> məzmun (məs. açıq test axınları) üçün istifadə edin. Provayder (TVTEAM) hesablarını buraya yazmayın.</div>'+
+        '<label>Playlist adı</label><input id="acpn" maxlength="40" placeholder="VEXO Demo">'+
+        '<label>M3U linki (https://…)</label><input id="acpu" maxlength="500" placeholder="https://…/demo.m3u"></details>'+
+      '<label>Qeyd (istəyə görə)</label><input id="acnote" maxlength="200">'+
+      '<button class="btn primary block" id="acmk">Kod yarat</button></div>'+
+    '<div class="sec"><h3>Kodlar</h3><div id="aclist" class="hint" style="margin-top:0">Yüklənir…</div></div></div>';
+  bg.querySelector('#x').onclick=closeSheet;
+  if(fresh){
+    bg.querySelector('#cpy').onclick=function(){
+      try { navigator.clipboard.writeText(codeFmt(fresh.code)).then(function(){ toast('Kopyalandı'); }, function(){ toast('Kopyalamaq olmadı — kodu əl ilə yazın',{bad:true}); }); }
+      catch(e){ toast('Kopyalamaq olmadı — kodu əl ilə yazın',{bad:true}); }
+    };
+  }
+  bg.querySelector('#acmk').onclick=async function(){
+    var b=this, lb=bg.querySelector('#aclb').value.trim();
+    var days=+bg.querySelector('#acdays').value, uses=+bg.querySelector('#acuses').value, valid=+bg.querySelector('#acvalid').value;
+    var pu=bg.querySelector('#acpu').value.trim(), pn=bg.querySelector('#acpn').value.trim();
+    if(lb.length<2){ toast('Kodun adını yazın',{bad:true}); return; }
+    if(!(days>=1&&days<=400) || !(uses>=1&&uses<=500) || !(valid>=1&&valid<=400)){ toast('Rəqəmləri yoxlayın (gün 1–400, TV 1–500)',{bad:true}); return; }
+    if(pu && !/^https?:\/\/\S+$/.test(pu)){ toast('Playlist linki http:// və ya https:// ilə başlamalıdır',{bad:true}); return; }
+    b.disabled=true;
+    try {
+      var r=await sb.rpc('create_activation_code',{ p_label:lb, p_grant_days:days, p_max_uses:uses, p_valid_days:valid,
+        p_is_test:bg.querySelector('#actest').checked, p_playlist_name:pn||null, p_playlist_url:pu||null, p_note:bg.querySelector('#acnote').value.trim()||null });
+      if(r.error) throw r.error;
+      openCodes(r.data);
+    } catch(e){ toast(codeErr(e),{bad:true}); b.disabled=false; }
+  };
+  var box=bg.querySelector('#aclist');
+  var r=await sb.rpc('activation_code_list');
+  if(!document.body.contains(box)) return;
+  if(r.error){ box.innerHTML=esc(codeErr(r.error)); bg.querySelector('#acmk').disabled=/v2\.11/.test(codeErr(r.error)); return; }
+  var rows=r.data||[];
+  box.innerHTML = rows.length ? rows.map(function(c){
+    var st=AC_ST[c.state]||AC_ST.active;
+    return '<div class="acrow"><div class="h"><b>'+esc(c.label)+' <span class="mono">····'+esc(c.hint)+'</span></b><span><span class="pill '+st[1]+'">'+st[0]+'</span>'+(c.is_test?' <span class="pill test">Test</span>':'')+'</span></div>'+
+      '<div class="m">'+c.grant_days+' gün abunə · istifadə: '+c.used_count+' / '+c.max_uses+' TV · etibarlı: '+esc(fmtDT(c.valid_until).slice(0,10))+'-dək'+(c.playlist_url?' · playlist: '+esc(c.playlist_name||'')+'':'')+'</div>'+
+      (c.devices&&c.devices.length ? '<div class="m">TV-lər: '+c.devices.map(function(x){ return '<a href="#" data-dv="'+x.device_id+'">#'+esc(x.customer_no)+(x.customer_name?' '+esc(x.customer_name):'')+'</a>'; }).join(', ')+'</div>' : '')+
+      (c.note?'<div class="m">'+esc(c.note)+'</div>':'')+
+      (c.state==='active'||c.state==='used_up' ? '<div class="rowbtns"><button class="btn" data-rv="'+c.id+'" data-rvt="'+(c.is_test?1:0)+'">Ləğv et</button></div>' : '')+
+    '</div>';
+  }).join('') : '<div class="empty">Hələ kod yoxdur.</div>';
+  box.querySelectorAll('[data-dv]').forEach(function(a){ a.onclick=async function(e){ e.preventDefault(); await load(); openDevice(a.getAttribute('data-dv')); }; });
+  box.querySelectorAll('[data-rv]').forEach(function(b){ b.onclick=async function(){
+    if(!confirm('Kod ləğv edilsin?\n\nKod bir daha qəbul olunmayacaq. Bu kodla artıq açılmış adi müştəri TV-lərinə toxunulmur.')) return;
+    var blockTest=false;
+    if(b.getAttribute('data-rvt')==='1') blockTest=confirm('Bu TEST kodu ilə açılmış test cihazları da indi bloklansın?\n\n(Məs. Google / Samsung yoxlaması bitibsə — "OK". Yalnız "Test" işarəli cihazlar bloklanır.)');
+    b.disabled=true;
+    var q=await sb.rpc('revoke_activation_code',{ p_id:+b.getAttribute('data-rv'), p_block_test_devices:blockTest });
+    if(q.error){ toast(codeErr(q.error),{bad:true}); b.disabled=false; return; }
+    toast('Kod ləğv edildi'+(q.data&&q.data.blocked_test_devices?' · '+q.data.blocked_test_devices+' test cihazı bloklandı':'')); load(); openCodes();
+  }; });
+}
+function codeErr(e){
+  var m=String((e&&(e.message||e.details))||e||'');
+  if(/Could not find the function|does not exist|PGRST202/.test(m)) return 'Bu funksiya üçün Supabase-də v2.11.0 miqrasiyası işlədilməlidir.';
+  var k={ bad_label:'Kodun adını yazın (1–60 simvol).', bad_days:'Abunə günü 1–400 olmalıdır.', bad_uses:'TV sayı 1–500 olmalıdır.', bad_valid:'Etibarlılıq 1–400 gün olmalıdır.', bad_url:'Playlist linki düzgün deyil.', not_found:'Kod tapılmadı.' };
+  var mm=m.match(/VX:([a-z_]+)/); if(mm && k[mm[1]]) return k[mm[1]];
+  return errText(e);
 }
 
 /* ---- v2.10: Baxış statistikası ---- */
@@ -962,6 +1070,7 @@ async function openRelease(){
   box.innerHTML=
     (cur ? '<div class="subline" style="margin-top:0">Göndərilən versiya: <b>'+esc(cur.version_name)+'</b> ('+fmtDT(cur.updated_at).slice(0,10)+') · bu versiyada: <b>'+onLatest+' / '+devices.length+'</b> TV'+(cur.notes?'<br>Qeyd: '+esc(cur.notes):'')+'</div>' :
       '<div class="subline" style="margin-top:0">Hələ yeniləmə göndərilməyib.</div>')+
+    '<div class="hint" style="margin-top:0">Bu bölmə yalnız <b>müstəqil APK</b> quraşdırılmış TV-lərə aiddir. Google Play və Samsung versiyaları öz mağazasından yenilənir: onlar APK yükləmir. "Məcburi versiya" onlara yalnız "mağazadan yeniləyin" xatırlatması kimi göstərilir (bloklamır).</div>'+
     '<div class="sec"><h3>Yeni versiya göndər</h3>'+
       '<label>1. APK faylı</label><input id="apk" type="file" accept=".apk,application/vnd.android.package-archive">'+
       '<label>2. Versiya (özü yazılır)</label><input id="vn" placeholder="APK seçin" inputmode="decimal">'+
@@ -1069,6 +1178,8 @@ var ACT={ activate:'✅ Aktivləşdirildi', payment_add:'💳 Ödəniş', trial:
   device_delete:'🗑 Cihaz silindi', pending_cleanup:'🧹 Köhnə qeyd təmizləndi', installer_code:'🛠 Quraşdırıcı kodu',
   release_publish:'⬆ Yeniləmə göndərildi', release_stop:'⏹ Yeniləmə dayandırıldı', min_version_set:'❗ Məcburi versiya',
   settings_change:'⚙ Ayarlar dəyişdi', registration_window:'🚪 Qeydiyyat pəncərəsi',
+  activation_code_create:'🔑 Aktivləşdirmə kodu yaradıldı', activation_code_revoke:'🔑 Kod ləğv edildi', activation_code_redeem:'🔑 Kodla aktivləşdirildi',
+  device_test_flag:'🧪 Test işarəsi', customer_anonymize:'🧽 Şəxsi məlumat silindi',
   iptv_account_create:'📡 IPTV hesabı yaradıldı', iptv_account_update:'📡 IPTV hesabı dəyişdi', iptv_account_archive:'📦 IPTV hesabı arxivləndi',
   iptv_credentials_set:'🔐 Playlist məlumatı daxil edildi', iptv_credentials_rotate:'🔐 Playlist məlumatı dəyişdi', iptv_package_add:'🧾 Provayder paketi', iptv_renewal:'🔁 Provayder yeniləməsi', iptv_package_void:'🧾 Paket ləğv edildi',
   iptv_assign:'➕ IPTV yeri təyin edildi', iptv_release:'➖ IPTV yeri boşaldıldı', iptv_suspend:'⏸ IPTV yeri dayandırıldı', iptv_resume:'▶ IPTV yeri bərpa edildi',
@@ -1318,7 +1429,7 @@ async function loadWatchIdle(){
   if(r.error || !r.data || r.data.enabled===false){ watchByDev=null; return; }
   watchByDev={}; (r.data.customers||[]).forEach(function(c){ watchByDev[c.device_id]={ sec:+c.seconds||0, last:c.last_day }; });
 }
-function isIdle(d){ return !!watchByDev && statusOf(d)==='active' && !d.replaced_by && !(watchByDev[d.id] && watchByDev[d.id].sec>0); }
+function isIdle(d){ return !!watchByDev && !d.is_test && statusOf(d)==='active' && !d.replaced_by && !(watchByDev[d.id] && watchByDev[d.id].sec>0); }
 function todayStr(){ var p=bk(Date.now()); return p.y+'-'+pad(p.m+1)+'-'+pad(p.d); }
 function addDaysStr(s, n){ var d=new Date(s+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
 function addMonthsStr(s, n){ var d=new Date(s+'T00:00:00Z'), day=d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth()+n); var dim=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).getUTCDate(); d.setUTCDate(Math.min(day,dim)); return d.toISOString().slice(0,10); }
